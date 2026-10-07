@@ -1,0 +1,25 @@
+{
+  "name": "crystal-kizor",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Single-page landing site for Crystal Kizor and the Studio COKA ecosystem.",
+  "scripts": {
+    "dev": "astro dev --host 0.0.0.0",
+    "build": "astro build",
+    "preview": "astro preview --host 0.0.0.0",
+    "check": "astro check",
+    "astro": "astro",
+    "fonts": "python3 scripts/subset-fonts.py"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.3.6",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^6.0.3"
+  }
+}

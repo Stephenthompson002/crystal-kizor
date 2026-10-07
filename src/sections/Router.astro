@@ -1,0 +1,71 @@
+---
+import Icon from '../components/Icon.astro';
+import { audiences } from '../data/site';
+
+/**
+ * The audience router. This is the section that answers "where do I go next?"
+ * It is deliberately the third thing on the page, before any depth, because
+ * the page serves six very different visitors.
+ */
+---
+
+<section id="start" aria-labelledby="router-title" class="section-y bg-linen">
+  <div class="shell">
+    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-16">
+      <div class="flex flex-col gap-5">
+        <p class="eyebrow flex items-center gap-2.5 text-clay">
+          <span aria-hidden="true" class="inline-block h-px w-6 bg-clay/50"></span>
+          Six ways in
+        </p>
+        <h2 id="router-title" class="text-h2 max-w-[18ch] text-ink">
+          Where would you like to start?
+        </h2>
+      </div>
+      <p class="max-w-[38ch] text-body leading-relaxed text-ink-soft md:pb-2">
+        Crystal’s work spans a design practice, a teaching platform and four initiatives. Pick the
+        path that matches you — each one goes straight to the right place.
+      </p>
+    </div>
+
+    <ul class="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-[2px] border border-sand-deep bg-sand-deep sm:grid-cols-2 lg:grid-cols-3" data-reveal>
+      {
+        audiences.map((audience, index) => (
+          <li class={audience.primary ? 'bg-paper' : 'bg-linen'}>
+            <a
+              href={audience.href}
+              class="group flex h-full flex-col gap-4 p-7 transition-colors duration-200 hover:bg-sand/70 lg:p-8"
+              data-track={audience.id}
+            >
+              <span class="flex items-center justify-between gap-4">
+                <span class="eyebrow text-ink-mute">{audience.kicker}</span>
+                <span
+                  aria-hidden="true"
+                  class="tabular font-display text-[0.9375rem] leading-none text-ink-mute"
+                >
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+              </span>
+
+              <span class="font-display text-h4 leading-[1.18] text-ink">{audience.title}</span>
+
+              <span class="text-small leading-relaxed text-ink-soft">{audience.body}</span>
+
+              <span
+                class={`mt-auto flex items-center gap-2 pt-2 text-micro font-semibold ${
+                  audience.primary ? 'text-clay' : 'text-ink'
+                }`}
+              >
+                {audience.action}
+                <Icon
+                  name="arrow-right"
+                  class="size-3.5 shrink-0 transition-transform duration-200 ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:translate-x-1"
+                  strokeWidth={2.2}
+                />
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

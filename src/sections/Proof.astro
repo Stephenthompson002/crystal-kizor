@@ -1,0 +1,71 @@
+---
+import Icon from '../components/Icon.astro';
+import StatValue from '../components/StatValue.astro';
+import { proofStats, coka } from '../data/site';
+---
+
+<!--
+  Immediately after the hero: the single strongest piece of evidence on the
+  page, given a dark band so it reads as a chapter break rather than more copy.
+-->
+<section aria-labelledby="proof-title" class="on-dark bg-night text-sand/75">
+  <div class="shell">
+    <div class="grid gap-14 py-20 md:py-24 lg:grid-cols-12 lg:gap-x-16">
+      <!-- The claim -->
+      <div class="flex flex-col items-start gap-6 lg:col-span-5">
+        <p class="eyebrow flex items-center gap-2.5 text-ochre">
+          <span aria-hidden="true" class="inline-block h-px w-6 bg-ochre/60"></span>
+          Measured, not asserted
+        </p>
+
+        <h2 id="proof-title" class="text-h3 max-w-[20ch] text-linen">
+          {coka.flagship.title}
+        </h2>
+
+        <p class="text-small leading-relaxed text-sand/55">
+          {coka.flagship.place}
+          <br />
+          {coka.flagship.years}
+        </p>
+
+        <p class="max-w-[42ch] text-body leading-relaxed text-sand/70">
+          An old residential building, kept and transformed: a translucent roof that daylight can
+          pass through, an elevated roof structure that lets hot air leave, and a standalone solar
+          system that took the building off the grid entirely.
+        </p>
+
+        <a
+          href="#work"
+          class="link-rule mt-1 inline-flex items-center gap-2 text-small font-semibold text-linen decoration-sand/30 hover:decoration-current"
+        >
+          Read the case study
+          <Icon name="arrow-down" class="size-4" strokeWidth={2} />
+        </a>
+      </div>
+
+      <!-- The evidence -->
+      <div class="lg:col-span-7">
+        <dl class="grid grid-cols-1 gap-x-12 gap-y-9 sm:grid-cols-2">
+          {
+            proofStats.map((stat) => (
+              <div class="flex flex-col gap-3 border-t border-sand/15 pt-7">
+                <dt class="font-display text-stat leading-none text-linen">
+                  <StatValue value={stat.value} />
+                </dt>
+                <dd class="flex flex-col gap-2">
+                  <span class="text-small font-medium leading-snug text-sand/85">{stat.label}</span>
+                  <span class="text-micro leading-relaxed text-sand/55">{stat.detail}</span>
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <p class="mt-8 border-t border-sand/10 pt-5 text-micro leading-relaxed text-sand/58">
+          Figures as reported by Studio COKA for The Eye Specialists Hospital, Nsukka — six years in
+          operation, compared against the building’s pre-renovation running costs.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

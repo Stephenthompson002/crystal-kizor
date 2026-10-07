@@ -1,0 +1,37 @@
+---
+/**
+ * Wordmark. The mark is built from nested brackets — a section drawing
+ * reduced to its simplest statement: enclosure, structure, solid volume.
+ */
+interface Props {
+  class?: string;
+  showWordmark?: boolean;
+  tone?: 'light' | 'dark';
+}
+
+const { class: className = '', showWordmark = true, tone = 'light' } = Astro.props;
+---
+
+<span class={`flex items-center gap-2.5 ${className}`}>
+  <svg
+    viewBox="0 0 28 28"
+    class={`size-[1.65rem] shrink-0 ${tone === 'dark' ? 'text-ochre' : 'text-clay'}`}
+    fill="none"
+    aria-hidden="true"
+  >
+    <path d="M2 26V2h24" stroke="currentColor" stroke-width="2.1" stroke-linejoin="miter"></path>
+    <path d="M9.5 26V9.5H26" stroke="currentColor" stroke-width="1.5" opacity="0.75"></path>
+    <rect x="16.5" y="16.5" width="9.5" height="9.5" fill="currentColor"></rect>
+  </svg>
+  {
+    showWordmark && (
+      <span
+        class={`font-display text-[1.0625rem] leading-none tracking-[-0.015em] ${
+          tone === 'dark' ? 'text-linen' : 'text-ink'
+        }`}
+      >
+        Crystal Kizor
+      </span>
+    )
+  }
+</span>

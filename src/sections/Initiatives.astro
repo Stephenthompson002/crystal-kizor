@@ -1,0 +1,137 @@
+---
+import Figure from '../components/Figure.astro';
+import Icon from '../components/Icon.astro';
+import { initiatives, meta } from '../data/site';
+
+const byId = Object.fromEntries(initiatives.map((i) => [i.id, i]));
+const elevate = byId['elevated'];
+const ako = byId['ako'];
+const alive = byId['alive-and-free'];
+
+const supportMailto = `mailto:${meta.email}?subject=Partnering%20with%20the%20Crystal%20Kizor%20initiatives&body=Organisation%3A%0AInitiative%20I%27m%20interested%20in%3A%0AWhat%20I%27m%20proposing%3A%0A`;
+
+const cardLink =
+  'group mt-auto inline-flex w-fit items-center gap-2.5 text-micro font-semibold text-clay';
+const arrow =
+  'size-3.5 shrink-0 transition-transform duration-200 ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:translate-x-1';
+---
+
+<section id="initiatives" aria-labelledby="initiatives-title" class="section-y bg-linen">
+  <div class="shell">
+    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-16">
+      <div class="flex flex-col gap-5">
+        <p class="eyebrow flex items-center gap-2.5 text-clay">
+          <span aria-hidden="true" class="inline-block h-px w-6 bg-clay/50"></span>
+          Beyond the practice
+        </p>
+        <h2 id="initiatives-title" class="text-h2 max-w-[18ch] text-ink">
+          Three more rooms in the same house.
+        </h2>
+      </div>
+      <p class="max-w-[40ch] text-body leading-relaxed text-ink-soft md:pb-2">
+        Not a portfolio of unrelated businesses. Each of these starts from the same belief: that how
+        a space is made, and who gets an opportunity, decides how people live.
+      </p>
+    </div>
+
+    <div class="mt-14 grid gap-6 lg:grid-cols-12">
+      <!-- AKO Alliance — given more weight, because the mission is the bigger one -->
+      <article
+        id={ako.id}
+        class="flex flex-col gap-7 rounded-[2px] border border-sand-deep bg-paper p-8 sm:p-10 lg:col-span-7 lg:row-span-2"
+        data-reveal
+      >
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <span class="eyebrow text-clay">{ako.status}</span>
+          <span class="eyebrow text-ink-mute">Education access</span>
+        </div>
+
+        <div class="flex flex-col gap-4">
+          <h3 class="text-h3 text-ink">{ako.name}</h3>
+          <p class="text-body leading-relaxed text-ink-soft">{ako.body}</p>
+        </div>
+
+        <Figure
+          fig="05"
+          ratio="16/9"
+          icon="book"
+          label="AKO Alliance — children returning to the classroom"
+        />
+
+        <p class="text-small leading-relaxed text-ink-soft">
+          Opportunity is the bedrock of the drive: children, families and young adults given a
+          platform from which they can thrive.
+        </p>
+
+        <a href={supportMailto} class={cardLink}>
+          {ako.action}
+          <Icon name="arrow-right" class={arrow} strokeWidth={2.2} />
+        </a>
+      </article>
+
+      <!-- ELEvated -->
+      <article
+        id={elevate.id}
+        class="flex flex-col gap-6 rounded-[2px] border border-sand-deep bg-paper p-8 sm:p-10 lg:col-span-5"
+        data-reveal
+        style="--reveal-delay:80ms"
+      >
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <span class="eyebrow text-clay">{elevate.status}</span>
+          <span class="eyebrow text-ink-mute">Product</span>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h3 class="text-h3 text-ink">{elevate.name}</h3>
+          <p class="text-small leading-relaxed text-ink-soft">{elevate.body}</p>
+        </div>
+
+        <a href="#contact" class={cardLink}>
+          {elevate.action}
+          <Icon name="arrow-right" class={arrow} strokeWidth={2.2} />
+        </a>
+      </article>
+
+      <!-- Alive and Free -->
+      <article
+        id={alive.id}
+        class="flex flex-col gap-6 rounded-[2px] border border-sand-deep bg-paper p-8 sm:p-10 lg:col-span-5"
+        data-reveal
+        style="--reveal-delay:160ms"
+      >
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <span class="eyebrow text-clay">{alive.status}</span>
+          <span class="eyebrow text-ink-mute">Community</span>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h3 class="text-h3 text-ink">{alive.name}</h3>
+          <p class="text-small leading-relaxed text-ink-soft">{alive.body}</p>
+        </div>
+
+        <a href="#contact" class={cardLink}>
+          {alive.action}
+          <Icon name="arrow-right" class={arrow} strokeWidth={2.2} />
+        </a>
+      </article>
+    </div>
+
+    <!-- Closing statement tying the layer back to the spine -->
+    <div
+      class="mt-14 flex flex-col gap-6 border-t border-sand-deep pt-9 md:flex-row md:items-center md:justify-between md:gap-16"
+    >
+      <p class="max-w-[52ch] font-display text-h4 leading-[1.2] text-ink">
+        If you are building something in this space — funding it, partnering on it, or joining it —
+        there is a way in.
+      </p>
+      <a href={supportMailto} class="group inline-flex w-fit shrink-0 items-center gap-2.5 text-small font-semibold text-clay">
+        Partner with the initiatives
+        <Icon
+          name="arrow-right"
+          class="size-4 transition-transform duration-200 ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:translate-x-1"
+          strokeWidth={2.2}
+        />
+      </a>
+    </div>
+  </div>
+</section>

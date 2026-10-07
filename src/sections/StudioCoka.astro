@@ -1,0 +1,134 @@
+---
+import Button from '../components/Button.astro';
+import Figure from '../components/Figure.astro';
+import Icon from '../components/Icon.astro';
+import { coka, meta } from '../data/site';
+
+const projectMailto = `mailto:${meta.email}?subject=Project%20enquiry%20%E2%80%94%20Studio%20COKA`;
+---
+
+<section id="studio-coka" aria-labelledby="coka-title" class="section-y bg-sand">
+  <div class="shell">
+    <!-- Section head -->
+    <div class="grid gap-8 lg:grid-cols-12 lg:gap-x-16">
+      <div class="flex flex-col gap-5 lg:col-span-7">
+        <p class="eyebrow flex items-center gap-2.5 text-clay">
+          <span aria-hidden="true" class="inline-block h-px w-6 bg-clay/50"></span>
+          {coka.role} · The practice
+        </p>
+        <h2 id="coka-title" class="text-h2 max-w-[20ch] text-ink">
+          The first design decision is the climate.
+        </h2>
+      </div>
+      <div class="flex flex-col gap-6 lg:col-span-5 lg:pt-3">
+        <p class="text-body leading-relaxed text-ink-soft">{coka.intro}</p>
+        <a
+          href="https://studiocoka.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link-rule inline-flex w-fit items-center gap-2 text-small font-semibold text-ink"
+        >
+          Visit studiocoka.com
+          <Icon name="arrow-up-right" class="size-3.5" strokeWidth={2.2} />
+          <span class="sr-only">(opens in a new tab)</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Principles + image -->
+    <div class="mt-16 grid gap-12 lg:mt-20 lg:grid-cols-12 lg:gap-x-16">
+      <dl class="flex flex-col lg:col-span-7">
+        {
+          coka.principles.map((principle) => (
+            <div class="flex flex-col gap-2 border-t border-ink/12 py-6 last:border-b sm:flex-row sm:items-baseline sm:gap-8">
+              <dt class="font-display text-h4 leading-tight text-ink sm:w-[13rem] sm:shrink-0">
+                {principle.term}
+              </dt>
+              <dd class="text-small leading-relaxed text-ink-soft">{principle.note}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <!-- The figure fills whatever height the principles list sets, so the two
+           columns end flush rather than leaving a gap. -->
+      <div class="lg:col-span-5">
+        <Figure
+          fig="02"
+          ratio="4/5"
+          label="Interior — daylight, filtered through breeze blocks, Enugu"
+          icon="building"
+          class="h-full shadow-lift"
+          innerClass="lg:aspect-auto lg:h-full"
+        />
+      </div>
+    </div>
+
+    <!-- Services -->
+    <div class="mt-20">
+      <h3 class="eyebrow text-ink-mute">How we work with clients</h3>
+      <ul class="mt-7 grid gap-px overflow-hidden rounded-[2px] border border-ink/12 bg-ink/12 md:grid-cols-3">
+        {
+          coka.services.map((service, i) => (
+            <li class="flex flex-col gap-4 bg-paper p-7 lg:p-8">
+              <span class="flex items-center gap-3">
+                <span class="tabular font-display text-[0.9375rem] leading-none text-clay">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span aria-hidden="true" class="h-px flex-1 bg-ink/12" />
+              </span>
+              <h4 class="font-display text-h4 leading-tight text-ink">{service.title}</h4>
+              <p class="text-small leading-relaxed text-ink-soft">{service.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- Process rail -->
+    <div class="mt-20">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <h3 class="eyebrow text-ink-mute">A project runs through seven stages</h3>
+        <p class="flex items-center gap-1.5 text-micro text-ink-soft sm:max-w-[30ch] sm:justify-end sm:text-right">
+          <span class="lg:hidden">Scroll across</span>
+          <Icon name="arrow-right" class="size-3.5 shrink-0 lg:hidden" strokeWidth={2} />
+          <span class="hidden lg:inline">From first conversation to handover.</span>
+        </p>
+      </div>
+
+      <ol
+        class="mt-7 -mx-gutter flex snap-x snap-mandatory gap-5 overflow-x-auto px-gutter pb-4 [scrollbar-width:thin] lg:mx-0 lg:grid lg:grid-cols-7 lg:gap-0 lg:overflow-visible lg:px-0 lg:pb-0"
+        role="list"
+      >
+        {
+          coka.process.map((step, i) => (
+            <li class="w-[11.5rem] shrink-0 snap-start border-t border-ink/20 pt-5 lg:w-auto lg:pr-5">
+              <span class="tabular block font-display text-[0.9375rem] leading-none text-clay">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <span class="mt-3 block text-small font-medium leading-snug text-ink">{step}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+
+    <!-- CTA -->
+    <div
+      class="mt-20 flex flex-col gap-8 rounded-[2px] border border-ink/12 bg-paper p-8 shadow-lift sm:p-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16 lg:p-12"
+    >
+      <div class="flex flex-col gap-3">
+        <h3 class="text-h3 max-w-[22ch] text-ink">{coka.cta.title}</h3>
+        <p class="max-w-[52ch] text-small leading-relaxed text-ink-soft">{coka.cta.body}</p>
+      </div>
+      <div class="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
+        <Button href={projectMailto} size="lg" icon="arrow-right" data-track="coka-start-project">
+            Start a project
+          </Button>
+        <Button href="#contact" variant="outline" size="lg" data-track="coka-all-contact">
+            All the ways in
+          </Button>
+      </div>
+    </div>
+  </div>
+</section>

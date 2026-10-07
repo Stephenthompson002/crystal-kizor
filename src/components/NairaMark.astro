@@ -1,0 +1,33 @@
+---
+/**
+ * NairaMark — the naira sign (₦), drawn rather than typed.
+ *
+ * Neither Fraunces nor Instrument Sans includes U+20A6, so a typed ₦ would
+ * fall through the font stack and render in a borrowed typeface next to
+ * figures set in Fraunces — a small but very visible break in the type system
+ * at display size. Drawing it guarantees the same mark on every device, and
+ * lets the stroke weight track the surrounding type.
+ *
+ * The glyph is built from the same primitives as the wordmark: two stems, a
+ * diagonal and two rules.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className = 'h-[0.72em]' } = Astro.props;
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 100 100"
+  class={`inline-block w-auto shrink-0 align-baseline ${className}`}
+  fill="none"
+  stroke="currentColor"
+  stroke-width="9"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d="M21 12v76M79 12v76M21 12l58 76" stroke-linecap="square"></path>
+  <path d="M5 41h90M5 59h90"></path>
+</svg>

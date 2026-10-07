@@ -1,0 +1,175 @@
+---
+import Figure from '../components/Figure.astro';
+import Icon from '../components/Icon.astro';
+import StatValue from '../components/StatValue.astro';
+import { coka, proofStats, meta } from '../data/site';
+
+const projectMailto = `mailto:${meta.email}?subject=Project%20enquiry%20%E2%80%94%20Studio%20COKA`;
+const flagshipUrl = 'https://studiocoka.com/projects/nigeria-first-off-grid-hospital';
+
+// The register: everything that is not the flagship, presented as a project
+// schedule rather than a grid of thumbnails.
+const register = coka.work.filter((project) => !project.featured);
+---
+
+<section id="work" aria-labelledby="work-title" class="section-y bg-linen">
+  <div class="shell">
+    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-16">
+      <div class="flex flex-col gap-5">
+        <p class="eyebrow flex items-center gap-2.5 text-clay">
+          <span aria-hidden="true" class="inline-block h-px w-6 bg-clay/50"></span>
+          Selected work
+        </p>
+        <h2 id="work-title" class="text-h2 max-w-[16ch] text-ink">
+          Proof, not mood boards.
+        </h2>
+      </div>
+      <p class="max-w-[40ch] text-body leading-relaxed text-ink-soft md:pb-2">
+        Every project here was judged on how it feels to stand inside it — and on whether it still
+        works when the power goes out.
+      </p>
+    </div>
+
+    <!-- Flagship -->
+    <article
+      class="on-dark mt-14 grid overflow-hidden rounded-[2px] bg-night text-sand/75 shadow-lift-lg lg:grid-cols-12"
+      data-reveal
+    >
+      <div class="lg:col-span-7">
+        <Figure
+          fig="03"
+          ratio="4/3"
+          tone="dark"
+          icon="building"
+          label="The atrium — translucent roof bringing daylight into the hospital"
+          class="h-full"
+          innerClass="lg:aspect-auto lg:min-h-[26rem] lg:h-full"
+        />
+      </div>
+
+      <div class="flex flex-col gap-6 p-8 sm:p-10 lg:col-span-5 lg:p-12">
+        <p class="eyebrow flex items-center gap-2.5 text-ochre">
+          <span aria-hidden="true" class="inline-block h-px w-6 bg-ochre/60"></span>
+          Flagship case study
+        </p>
+
+        <div class="flex flex-col gap-3">
+          <h3 class="text-h3 max-w-[20ch] text-linen">{coka.flagship.title}</h3>
+          <p class="text-micro leading-relaxed text-sand/50">
+            {coka.flagship.place}
+            <br />
+            {coka.flagship.years}
+          </p>
+        </div>
+
+        <p class="text-small leading-relaxed text-sand/70">{coka.flagship.body}</p>
+
+        <p class="border-l border-ochre/40 pl-4 text-small italic leading-relaxed text-sand/55">
+          {coka.flagship.note}
+        </p>
+
+        <dl class="grid grid-cols-3 gap-x-5 gap-y-4 border-t border-sand/15 pt-6">
+          {
+            proofStats.slice(0, 3).map((stat) => (
+              <div class="flex flex-col gap-1.5">
+                <dt class="font-display text-[1.5rem] leading-none text-linen">
+                  <StatValue value={stat.value} />
+                </dt>
+                <dd class="text-[0.6875rem] leading-snug text-sand/50">
+                  {stat.label}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <a
+          href={flagshipUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link-rule mt-1 inline-flex w-fit items-center gap-2 text-small font-semibold text-linen decoration-sand/30 hover:decoration-current"
+        >
+          Full case study on studiocoka.com
+          <Icon name="arrow-up-right" class="size-3.5" strokeWidth={2.2} />
+          <span class="sr-only">(opens in a new tab)</span>
+        </a>
+      </div>
+    </article>
+
+    <!-- Project register -->
+    <div class="mt-20">
+      <h3 class="eyebrow text-ink-mute">Also in the portfolio</h3>
+
+      <ol class="mt-7 border-t border-sand-deep" role="list">
+        {
+          register.map((project, i) => (
+            <li
+              class="group border-b border-sand-deep"
+              data-reveal
+              style={`--reveal-delay:${i * 70}ms`}
+            >
+              <div class="grid grid-cols-1 gap-x-8 gap-y-2 py-6 md:grid-cols-12 md:items-baseline">
+                <span
+                  aria-hidden="true"
+                  class="tabular font-display text-[0.9375rem] leading-none text-ink-mute md:col-span-1"
+                >
+                  {String(i + 2).padStart(2, '0')}
+                </span>
+
+                <h4 class="font-display text-h4 leading-tight text-ink md:col-span-4">
+                  {project.title}
+                </h4>
+
+                <p class="text-micro leading-relaxed text-ink-soft md:col-span-2">
+                  {project.place}
+                </p>
+
+                <p class="text-micro text-ink-mute md:col-span-2">{project.type}</p>
+
+                <p class="text-small leading-relaxed text-ink-soft md:col-span-3">
+                  {project.note}
+                </p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div
+        class="mt-9 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-10"
+      >
+        <p class="max-w-[46ch] text-small leading-relaxed text-ink-soft">
+          “{coka.testimonial.quote}” — {coka.testimonial.attribution},{' '}
+          {coka.testimonial.context}
+        </p>
+        <a
+          href="https://studiocoka.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link-rule inline-flex w-fit shrink-0 items-center gap-2 text-small font-semibold text-ink"
+        >
+          See the full portfolio
+          <Icon name="arrow-up-right" class="size-3.5" strokeWidth={2.2} />
+          <span class="sr-only">(opens in a new tab)</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Closing CTA for the commercial path -->
+    <div class="mt-16 flex flex-col gap-5 border-t border-sand-deep pt-9 sm:flex-row sm:items-center sm:justify-between">
+      <p class="font-display text-h4 text-ink">Building something in Nigeria or West Africa?</p>
+      <a
+        href={projectMailto}
+        class="group inline-flex w-fit items-center gap-2.5 text-small font-semibold text-clay"
+        data-track="work-send-brief"
+      >
+        Send a short brief
+        <Icon
+          name="arrow-right"
+          class="size-4 transition-transform duration-200 ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:translate-x-1"
+          strokeWidth={2.2}
+        />
+      </a>
+    </div>
+  </div>
+</section>
