@@ -9,6 +9,24 @@ the climate**, and every venture is an expression of it.
 
 ---
 
+## The written submission
+
+**[`ASSESSMENT.md`](ASSESSMENT.md) is the written half of the deliverable**, in the order the brief
+sets out: Part 1 (the landing page), Part 2 (AI product thinking), Part 3 (analytics and
+improvement), then the submission note. The three word limits are not maintained by hand —
+`scripts/word-count.py` reads the file and fails the build if any of them is exceeded, so the counts
+cannot drift as the content changes:
+
+| Section | Limit | Current |
+| --- | --- | --- |
+| Part 2 — AI product thinking | 300 | 296 |
+| Part 3 — analytics and improvement (measurement *and* the 5,000-visitor scenario share one budget) | 250 | 247 |
+| Submission note — thinking, key decisions, technology | 200 | 198 |
+
+`npm run words` runs the check on its own; `npm run verify` includes it.
+
+---
+
 ## Quick start
 
 ```bash
@@ -244,14 +262,14 @@ Measured on the production build by `scripts/audit.py` (gzipped transfer):
 
 | Asset | Gzipped |
 | --- | --- |
-| `index.html` | 19.1 KB |
-| CSS | 8.1 KB |
+| `index.html` | 19.3 KB |
+| CSS | 8.0 KB |
 | JavaScript | 1.1 KB |
 | Fraunces (subsetted, `opsz` axis) | 31.9 KB |
 | Instrument Sans (subsetted, `wght` axis) | 27.6 KB |
-| `favicon.svg` | 4.2 KB |
+| `favicon.svg` | 3.2 KB |
 | Hero photograph (the 800 px candidate a 1440 px screen picks) | 75.4 KB |
-| **First load total** | **≈ 167 KB in 7 requests** |
+| **First load total** | **166.5 KB in 7 requests** |
 
 What gets it there:
 
@@ -316,9 +334,21 @@ SITE=https://<user>.github.io BASE_PATH=/crystal-kizor npm run build
 
 ### GitHub Pages (included)
 
-`.github/workflows/deploy.yml` type-checks, builds and publishes to Pages on every push, resolving
-the real Pages URL for `SITE`/`BASE_PATH` automatically. It is what produces the live link for this
-submission; the same workflow works unchanged behind a custom domain.
+`.github/workflows/deploy.yml` runs on every push and is split into two jobs on purpose:
+
+- **`verify`** — type-check, build, audit, word counts. It has no dependency on hosting at all, so
+  the quality gate is enforced even in a repository where Pages has not been switched on.
+- **`deploy`** — resolves the real Pages URL into `SITE`/`BASE_PATH`, rebuilds, and publishes. It
+  `needs: verify`, so a regression cannot ship.
+
+That split matters here: the first runs failed at `actions/configure-pages`, and because the gate sat
+*behind* it in the same job, the audits never executed at all. Isolating the publish step means the
+gate always reports, and a hosting problem can only ever fail the job that publishes.
+
+**One manual step is required the first time:** *Settings → Pages → Source: **GitHub Actions***. A
+workflow token is not permitted to create the Pages site in every repository, which is what
+`enablement: true` is attempting. After that single change the step becomes a no-op and the workflow
+is self-sufficient.
 
 ### Vercel
 
@@ -375,7 +405,7 @@ npm run marks     # src/assets/brand — extract + trace the supplied logo sheet
 npm run brand     # public/favicon.svg, public/og.png, public/brand/
 npm run audit     # markup, contrast, first-load payload, against dist/
                   #   (add the fontTools venv to also check glyph coverage)
-npm run words     # checks ASSESSMENT.md against the brief's 200/300/250 limits
+npm run words     # checks ASSESSMENT.md against the brief's 300/250/200 limits
 ```
 
 `assets-src/` holds the untouched client-supplied downloads and is deliberately **not** committed —
