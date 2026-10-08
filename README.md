@@ -354,10 +354,12 @@ SITE=https://<user>.github.io BASE_PATH=/crystal-kizor npm run build
 
 `.github/workflows/deploy.yml` runs on every push and is split into two jobs on purpose:
 
-- **`verify`** — type-check, build, audit, word counts. It has no dependency on hosting at all, so
-  the quality gate is enforced even in a repository where Pages has not been switched on.
+- **`verify`** — type-check, build, audit, word counts. No hosting dependency at all, so the quality
+  gate reports on every branch and every push.
 - **`deploy`** — resolves the real Pages URL into `SITE`/`BASE_PATH`, rebuilds, and publishes. It
-  `needs: verify`, so a regression cannot ship.
+  `needs: verify`, so a regression cannot ship, and it runs **only on `main`** (or a manual
+  `workflow_dispatch`), so a feature branch never goes red for a repository setting it cannot
+  change. Nothing is lost: a branch push is what the gate is for, and publishing is a `main` event.
 
 That split matters here. The first runs failed at `actions/configure-pages`, and because the gate sat
 *behind* it in the same job, **the audits never executed at all** — the quality gate the brief is
@@ -367,8 +369,9 @@ request returned `Resource not accessible by integration` on every run. The step
 the Pages configuration.
 
 **One manual step is required the first time:** *Settings → Pages → Source: **GitHub Actions***. It
-cannot be done from CI. After that single change the `deploy` job publishes and the workflow is
-self-sufficient.
+cannot be done from CI, and without it `deploy` stops at `Configure Pages` with *"Get Pages site
+failed … verify that the repository has Pages enabled"*. This is the only outstanding step in the
+delivery. Once it is set, merging to `main` publishes and the workflow is self-sufficient.
 
 ### Vercel
 

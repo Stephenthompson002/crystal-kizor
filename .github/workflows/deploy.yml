@@ -54,8 +54,21 @@ jobs:
           python3 scripts/audit.py
           python3 scripts/word-count.py
 
+  # Publishing is deliberately scoped to main. A branch push verifies and stops
+  # there, so a feature branch never shows a red pipeline for a repository
+  # setting it cannot change, and a broken deploy can never block review.
+  # `workflow_dispatch` still allows a manual publish from any branch.
+  #
+  # This job needs GitHub Pages switched on once — Settings → Pages → Source:
+  # GitHub Actions. It cannot be done from here: creating the Pages site needs
+  # repository administration the workflow token does not have (the API answers
+  # "Resource not accessible by integration"), and `configure-pages` with
+  # `enablement` failed every run with exactly that. Without it, this job stops
+  # at `Configure Pages` with "Get Pages site failed … verify that the
+  # repository has Pages enabled". Nothing else is blocking the deploy.
   deploy:
     needs: verify
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -72,19 +85,8 @@ jobs:
         run: npm ci
 
       # Resolves the real Pages URL (origin + base path) so the build never
-      # hard-codes a domain.
-      #
-      # `enablement: true` is deliberately NOT used. Creating the Pages site
-      # needs repository administration the workflow token does not have, and
-      # asking for it failed every single run with "Resource not accessible by
-      # integration" — which, because the audits sat behind it in the same job,
-      # meant the quality gate never ran at all. Without it this step only
-      # *reads* the Pages configuration.
-      #
-      # A repository with Pages switched off (Settings → Pages → Source:
-      # GitHub Actions) will still see this step warn and the publish steps
-      # below fail. That is confined to this job on purpose: `verify` above is
-      # independent of hosting and reports either way.
+      # hard-codes a domain. See the note on the job above for why `enablement`
+      # is not used and what has to be switched on first.
       - name: Configure Pages
         id: pages
         uses: actions/configure-pages@v5
