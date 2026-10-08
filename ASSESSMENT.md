@@ -1,12 +1,14 @@
 # Stage 1 Assessment — Crystal Kizor
 
-**Live:** https://stephenthompson002.github.io/crystal-kizor/
+**Live:** https://crystal-kizor.netlify.app/
 **Source:** https://github.com/Stephenthompson002/crystal-kizor
 
-The build is fully static and publishes itself to GitHub Pages on every push
-(`.github/workflows/deploy.yml`). If the live URL does not resolve, Pages needs switching on once for
-the repository — *Settings → Pages → Source: **GitHub Actions***. A workflow token is not permitted
-to create the Pages site, and that is the only step in this delivery that could not be done from CI.
+The build is fully static — `npm run build` produces `dist/` with no runtime, no API keys and no
+server — so any host serves it unchanged. This delivery is deployed on **Netlify** from that build.
+The repository additionally carries a GitHub Actions workflow that type-checks, builds, audits and
+publishes to GitHub Pages on every push; if that mirror is used, Pages needs switching on once for
+the repository — *Settings → Pages → Source: **GitHub Actions*** — because a workflow token is not
+permitted to create the Pages site.
 
 ---
 

@@ -341,6 +341,9 @@ consent banner, which keeps the page fast and the visitor's first impression cle
 
 The build is fully static — any host works. `npm run build` produces `dist/`.
 
+The live page for this submission is **https://crystal-kizor.netlify.app/**, deployed on Netlify
+from that same `dist/` build (build command `npm run build`, publish directory `dist`).
+
 Both the origin and the base path come from the environment, so one repository can build for a domain
 root *or* for a project subpath such as `https://<user>.github.io/crystal-kizor/` with no source
 change:
