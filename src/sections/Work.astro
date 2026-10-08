@@ -1,4 +1,5 @@
 ---
+import BeforeAfter from '../components/BeforeAfter.astro';
 import Button from '../components/Button.astro';
 import Figure from '../components/Figure.astro';
 import Icon from '../components/Icon.astro';
@@ -84,6 +85,33 @@ const withImages = projects.filter((p) => p.id !== 'tesh' && p.image);
         </div>
       </div>
     </article>
+
+    <!-- Before and after: the same building, before the renovation and after it. -->
+    {
+      flagship.beforeAfter && (
+        <div class="mt-16 grid gap-8 lg:grid-cols-12 lg:gap-x-16" data-reveal>
+          <div class="flex flex-col gap-4 lg:col-span-4 lg:pt-2">
+            <p class="eyebrow flex items-center gap-2.5 text-clay">
+              <span aria-hidden="true" class="inline-block h-px w-6 bg-clay/50"></span>
+              Before and after
+            </p>
+            <h3 class="text-h3 text-ink">The same building, transformed.</h3>
+            <p class="text-micro leading-relaxed text-ink-mute">
+              Drag the handle to compare the existing residential building with the hospital it
+              became. Photographs by Studio COKA.
+            </p>
+          </div>
+          <div class="lg:col-span-8">
+            <BeforeAfter
+              id="tesh-before-after"
+              before={flagship.beforeAfter.before}
+              after={flagship.beforeAfter.after}
+              ratio="16/10"
+            />
+          </div>
+        </div>
+      )
+    }
 
     <!-- The built work, with the supplied photography -->
     <div class="mt-20 flex flex-col gap-20 lg:gap-24">

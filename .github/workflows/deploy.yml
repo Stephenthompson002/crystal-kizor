@@ -6,7 +6,7 @@ name: Deploy to GitHub Pages
 # works unchanged behind a custom domain — see README → Deployment.
 on:
   push:
-    branches: [main, arena/49fc95e0-crystal-kizor]
+    branches: [main, arena/49fc95e0-crystal-kizor, arena/d9889fde-crystal-kizor]
   workflow_dispatch:
 
 permissions:
@@ -35,13 +35,14 @@ jobs:
         run: npm ci
 
       # Resolves the real Pages URL (origin + base path) so the build never
-      # hard-codes a domain. `enablement: true` also turns Pages on for the
-      # repository the first time this runs.
+      # hard-codes a domain. Pages must be switched on once in the repository
+      # settings (Settings → Pages → Source: GitHub Actions). `enablement` is
+      # deliberately not used: creating the site needs admin rights that the
+      # workflow token does not have, which failed every run with
+      # "Resource not accessible by integration".
       - name: Configure Pages
         id: pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Type-check
         run: npm run check

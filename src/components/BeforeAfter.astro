@@ -1,0 +1,197 @@
+---
+import Figure from './Figure.astro';
+
+/**
+ * BeforeAfter — a drag-to-compare slider for two photographs of the same place.
+ *
+ * Progressive enhancement, in three layers:
+ *  1. No JavaScript: both frames are present and the stage opens half and
+ *     half, so the comparison still reads. The slider controls are hidden.
+ *  2. JavaScript: a native <input type="range"> drives a CSS variable (--split)
+ *     that clips the "before" frame. Keyboard, screen readers and touch all
+ *     work through the real form control.
+ *  3. Pointer: dragging anywhere on the photograph moves the divider, with
+ *     touch-action set so vertical scrolling still works on phones.
+ *
+ * Each side takes an image (imported statically) or, until one is supplied, a
+ * labelled drawing-sheet placeholder that says exactly which photograph belongs
+ * there. Nothing is borrowed from another project to fill a gap.
+ */
+interface Frame {
+  image?: ImageMetadata;
+  alt: string;
+  /** Placeholder copy, shown only while `image` is not supplied. */
+  label: string;
+}
+
+interface Props {
+  id: string;
+  before: Frame;
+  after: Frame;
+  /** Stage aspect ratio, e.g. "16/10". */
+  ratio?: string;
+  class?: string;
+}
+
+const { id, before, after, ratio = '16/10', class: className = '' } = Astro.props;
+const rangeId = `${id}-range`;
+---
+
+<div class={`before-after ${className}`} data-compare>
+  <div
+    class="ba-stage relative overflow-hidden rounded-[2px] bg-sand-deep shadow-lift"
+    style={`aspect-ratio: ${ratio.replace('/', ' / ')};`}
+    data-stage
+  >
+    <div class="ba-layer absolute inset-0" data-layer="after">
+      <Figure
+        src={after.image}
+        alt={after.alt}
+        label={after.label}
+        ratio={ratio}
+        sizes="(min-width: 1024px) 60vw, 100vw"
+        class="h-full"
+        innerClass="h-full"
+      />
+    </div>
+    <div class="ba-layer ba-layer-before absolute inset-0" data-layer="before">
+      <Figure
+        src={before.image}
+        alt={before.alt}
+        label={before.label}
+        ratio={ratio}
+        sizes="(min-width: 1024px) 60vw, 100vw"
+        class="h-full"
+        innerClass="h-full"
+      />
+    </div>
+
+    <span aria-hidden="true" class="ba-divider absolute inset-y-0 w-0.5">
+      <span class="ba-grip absolute left-1/2 top-1/2 flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-paper text-ink">
+        <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 6l-6 6 6 6M15 6l6 6-6 6"></path>
+        </svg>
+      </span>
+    </span>
+    <span aria-hidden="true" class="ba-tag ba-tag-before absolute left-4 top-4">Before</span>
+    <span aria-hidden="true" class="ba-tag ba-tag-after absolute right-4 top-4">After</span>
+  </div>
+
+  <div class="ba-controls mt-5 flex items-center gap-5">
+    <label for={rangeId} class="eyebrow shrink-0 text-ink-mute">Drag to compare</label>
+    <input
+      id={rangeId}
+      type="range"
+      min="0"
+      max="100"
+      step="0.5"
+      value="50"
+      class="ba-range w-full"
+      aria-label="Divider position: move left to see the after, right to see the before"
+    />
+  </div>
+</div>
+
+<style>
+  .before-after {
+    --split: 50%;
+  }
+
+  .ba-stage {
+    touch-action: pan-y;
+    cursor: ew-resize;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* The before frame sits on top and is clipped to the left of the divider. */
+  .ba-layer-before {
+    clip-path: inset(0 calc(100% - var(--split)) 0 0);
+  }
+
+  .ba-divider {
+    left: var(--split);
+    translate: -50% 0;
+    background: var(--color-paper);
+    box-shadow: 0 0 0 1px rgb(18 16 14 / 0.18);
+    pointer-events: none;
+  }
+
+  .ba-grip {
+    box-shadow:
+      0 0 0 1px rgb(18 16 14 / 0.12),
+      0 6px 18px rgb(18 16 14 / 0.24);
+  }
+
+  .ba-tag {
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    border-radius: 2px;
+    background: rgb(18 16 14 / 0.72);
+    color: var(--color-linen);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  /* Without JavaScript the tags and divider would sit over a static split
+     with no way to move them, so only the static pair is shown. */
+  .before-after:not([data-ready]) .ba-divider,
+  .before-after:not([data-ready]) .ba-controls,
+  .before-after:not([data-ready]) .ba-tag {
+    display: none;
+  }
+
+  .before-after:not([data-ready]) .ba-stage {
+    cursor: default;
+  }
+
+  .ba-range {
+    accent-color: var(--color-clay);
+    height: 2.75rem;
+    margin: 0;
+  }
+</style>
+
+<script>
+  // Vanilla, dependency-free. Runs once per comparison on the page.
+  document.querySelectorAll<HTMLElement>('[data-compare]').forEach((root) => {
+    const stage = root.querySelector<HTMLElement>('[data-stage]');
+    const range = root.querySelector<HTMLInputElement>('input[type="range"]');
+    if (!stage || !range) return;
+
+    const set = (value: number) => {
+      const clamped = Math.round(Math.min(100, Math.max(0, value)) * 10) / 10;
+      root.style.setProperty('--split', `${clamped}%`);
+      range.value = String(clamped);
+    };
+
+    set(Number(range.value));
+    range.addEventListener('input', () => set(Number(range.value)));
+
+    let dragging = false;
+    const positionFromPointer = (event: PointerEvent) => {
+      const rect = stage.getBoundingClientRect();
+      set(((event.clientX - rect.left) / rect.width) * 100);
+    };
+
+    stage.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) return;
+      dragging = true;
+      stage.setPointerCapture(event.pointerId);
+      positionFromPointer(event);
+    });
+    stage.addEventListener('pointermove', (event) => {
+      if (dragging) positionFromPointer(event);
+    });
+    const end = () => {
+      dragging = false;
+    };
+    stage.addEventListener('pointerup', end);
+    stage.addEventListener('pointercancel', end);
+
+    root.dataset.ready = '';
+  });
+</script>

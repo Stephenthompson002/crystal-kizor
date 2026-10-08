@@ -38,6 +38,15 @@ export type Project = {
   imageAlt?: string;
   /** Additional frames for the project's small gallery. */
   gallery?: { image: ImageMetadata; alt: string }[];
+  /**
+   * A before/after pair of the same place, for the drag-to-compare slider.
+   * Each side takes an `image` once the photograph is supplied; until then the
+   * slider shows the labelled placeholder for that side.
+   */
+  beforeAfter?: {
+    before: { image?: ImageMetadata; alt: string; label: string };
+    after: { image?: ImageMetadata; alt: string; label: string };
+  };
   featured?: boolean;
 };
 
@@ -49,9 +58,19 @@ export const projects: Project[] = [
     type: 'Healthcare · Renovation',
     year: '2018 – 2019',
     note: 'Nigeria’s first fully off-grid hospital. An existing residential building retained and transformed around daylight, natural ventilation and a standalone solar system.',
-    // No photographic assets were supplied for the hospital. It is presented as
-    // a written case study with the measured results rather than illustrated
-    // with imagery from another project.
+    // Only photographs of this building are used here. The before and after
+    // frames are the same place, shot by the practice, and shown with the
+    // measured results. Nothing is borrowed from another project.
+    beforeAfter: {
+      before: {
+        alt: 'The Eye Specialists Hospital before renovation, when the building was an existing residential structure',
+        label: 'Before — the existing building, pre-renovation photograph to be supplied',
+      },
+      after: {
+        alt: 'The Eye Specialists Hospital after renovation, with its daylit atrium and open, naturally ventilated interior',
+        label: 'After — the renovated hospital, photograph to be supplied',
+      },
+    },
     featured: true,
   },
   {

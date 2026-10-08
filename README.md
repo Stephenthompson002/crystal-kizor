@@ -83,6 +83,7 @@ crystal-kizor/
     │   ├── BrandMark.astro     # the traced marks as a currentColor CSS mask
     │   ├── Button.astro        # 4 variants × 3 sizes, renders <a> or <button>
     │   ├── Figure.astro        # responsive image, or a clearly marked placeholder
+    │   ├── BeforeAfter.astro   # drag-to-compare slider: native range input + vanilla JS, no-JS fallback
     │   ├── Footer.astro        # 4 link columns + contact band + socials
     │   ├── Header.astro        # sticky header + accessible mobile panel
     │   ├── Icon.astro          # inline SVG set
@@ -191,7 +192,7 @@ Twenty-four photographs, all from the folders supplied with the brief, processed
 | --- | --- |
 | Hero | The studio portrait, 4:5, the only eager image on the page. |
 | Studio COKA | A working drawing beside a physical massing model. |
-| Work | Nature Home 2, Nature Home and the Community Centre — a lead frame and a five-frame gallery each. |
+| Work | The hospital's before-and-after pair (a drag-to-compare slider), Nature Home 2, Nature Home and the Community Centre — a lead frame and a five-frame gallery each. |
 | About | A portrait at the drawing board, with plans pinned to the wall behind. |
 | Knowledge | The podcast desk (TEA) and the standing studio portrait (Speaking). |
 | Contact | The editorial portrait, closing the page. |
@@ -207,9 +208,7 @@ node scripts/build-images.mjs
 ```
 
 **Attribution is by folder.** An image is only shown against the project whose folder it came from.
-The hospital — the flagship — is presented as a written case study with no photograph, because none
-was supplied: illustrating it with another building would be a straightforward misrepresentation. It
-also states plainly that clinical privacy governs its imagery. AKO Alliance keeps a **marked
+The hospital — the flagship — is shown as a **before-and-after pair of the same building**: the existing residential structure and the renovated hospital. Those frames come from the practice's own project record and are attributed to Studio COKA. The slider's frames are wired in `src/data/projects.ts` (`beforeAfter`). Until the two photographs are added, each side shows a labelled placeholder naming the photograph it needs, rather than an image borrowed from another project. It also states plainly that clinical privacy governs its imagery. AKO Alliance keeps a **marked
 placeholder** naming the photograph it wants, and no image is borrowed from the practice to fill it.
 
 Alt text describes each frame as it actually is (checked frame by frame against the file), and where
@@ -319,6 +318,10 @@ SITE=https://<user>.github.io BASE_PATH=/crystal-kizor npm run build
 `.github/workflows/deploy.yml` type-checks, builds and publishes to Pages on every push, resolving
 the real Pages URL for `SITE`/`BASE_PATH` automatically. It is what produces the live link for this
 submission; the same workflow works unchanged behind a custom domain.
+
+One-time setup: in the repository, go to **Settings → Pages → Build and deployment → Source** and choose
+**GitHub Actions**. The workflow deliberately does not try to create the Pages site itself (it needs admin
+rights the workflow token lacks), so the first run fails until this is switched on.
 
 ### Vercel
 
