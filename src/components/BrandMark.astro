@@ -1,0 +1,53 @@
+---
+import { readFileSync } from 'node:fs';
+import { asset } from '../lib/url';
+
+/**
+ * BrandMark — the real Crystal Kizor marks, traced from the supplied logo
+ * collection by scripts/trace-marks.py.
+ *
+ * Rendered as a CSS mask rather than an inline <img> or inlined SVG:
+ *
+ *   - the mark takes `currentColor`, so the same file works on the linen
+ *     header and the near-black footer with no colour variants;
+ *   - it stays a single cached request instead of adding ~10 KB of path data
+ *     to the HTML, which matters because the header renders on every section;
+ *   - it scales cleanly because the source is vector, not raster.
+ *
+ * The accessible name is carried on the wrapper, and the mark is decorative
+ * when it sits beside a visible wordmark.
+ */
+interface Props {
+  /** "monogram" — the CK mark; "signature" — the script signature. */
+  mark?: 'monogram' | 'signature';
+  /** CSS height, e.g. "h-8" or "h-[3.25rem]". Width follows the aspect ratio. */
+  class?: string;
+  /** Provide only when the mark is the sole label for a link. */
+  title?: string;
+}
+
+const { mark = 'monogram', class: className = 'h-8', title } = Astro.props;
+
+/**
+ * The mask box is sized from the file's own viewBox rather than a constant
+ * copied into the markup — retrace a mark at a different aspect and this
+ * follows automatically instead of letterboxing the brand.
+ */
+function aspectRatio(name: string): string {
+  const svg = readFileSync(`${process.cwd()}/public/brand/${name}.svg`, 'utf8');
+  const [, , width, height] = (svg.match(/viewBox="([^"]+)"/)?.[1] ?? '0 0 100 100')
+    .split(/\s+/)
+    .map(Number);
+  return `${width} / ${height}`;
+}
+
+const ratio = aspectRatio(mark);
+---
+
+<span
+  class={`block shrink-0 bg-current ${className}`}
+  style={`aspect-ratio:${ratio};mask-image:url(${asset(`/brand/${mark}.svg`)});-webkit-mask-image:url(${asset(`/brand/${mark}.svg`)});mask-repeat:no-repeat;mask-position:center;mask-size:contain;-webkit-mask-repeat:no-repeat;-webkit-mask-position:center;-webkit-mask-size:contain;`}
+  role={title ? 'img' : undefined}
+  aria-label={title}
+  aria-hidden={title ? undefined : 'true'}
+></span>

@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../sections/Hero.astro';
+import Proof from '../sections/Proof.astro';
+import Router from '../sections/Router.astro';
+import StudioCoka from '../sections/StudioCoka.astro';
+import Work from '../sections/Work.astro';
+import About from '../sections/About.astro';
+import Knowledge from '../sections/Knowledge.astro';
+import Initiatives from '../sections/Initiatives.astro';
+import Contact from '../sections/Contact.astro';
+
+/**
+ * Page order is the information architecture, and it is deliberate:
+ *
+ *   Hero       → who she is, what she does, why it matters   (3 seconds)
+ *   Proof      → the single strongest piece of evidence      (credibility)
+ *   Router     → six audience paths                          (orientation)
+ *   StudioCOKA → the commercial core, in depth               (depth)
+ *   Work       → the projects that back it up                (proof)
+ *   About      → the spine that connects every venture       (coherence)
+ *   Knowledge  → TEA + speaking, the thought-leadership layer
+ *   Initiatives→ ELEvated, AKO Alliance, Alive and Free      (lower weight)
+ *   Contact    → a specific next step per visitor type        (conversion)
+ */
+---
+
+<Base>
+  <Hero />
+  <Proof />
+  <Router />
+  <StudioCoka />
+  <Work />
+  <About />
+  <Knowledge />
+  <Initiatives />
+  <Contact />
+</Base>

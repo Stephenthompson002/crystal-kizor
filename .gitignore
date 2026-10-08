@@ -1,0 +1,37 @@
+# Build output
+dist/
+.output/
+
+# Generated types
+.astro/
+
+# Unprocessed client-supplied source assets (54 MB). Everything derived from
+# them is committed, and every derivation is a script — see README.
+assets-src/
+
+# Local build caches (OG card intermediates, asset-pipeline scratch)
+.cache/
+
+# Dependencies
+node_modules/
+
+# Python bytecode from the build scripts
+__pycache__/
+*.pyc
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment
+.env
+.env.production
+.env.local
+
+# Editors / OS
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/

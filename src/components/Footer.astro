@@ -1,0 +1,151 @@
+---
+import { meta, socials, initiatives } from '../data/site';
+import Icon from './Icon.astro';
+import Wordmark from './Wordmark.astro';
+
+const year = new Date().getFullYear();
+
+const columns = [
+  {
+    title: 'Practice',
+    links: [
+      { label: 'Studio COKA', href: '#studio-coka' },
+      { label: 'Selected work', href: '#work' },
+      { label: 'Off-grid hospital', href: '#work' },
+      { label: 'Interiors', href: '#studio-coka' },
+    ],
+  },
+  {
+    title: 'Knowledge',
+    links: [
+      { label: 'The Effective Architect', href: '#knowledge' },
+      { label: 'Tropical Design Framework', href: '#knowledge' },
+      { label: 'Speaking', href: '#speaking' },
+      { label: 'Writing & research', href: '#about' },
+    ],
+  },
+  {
+    title: 'Initiatives',
+    links: initiatives.map((i) => ({ label: i.name, href: `#${i.id}` })),
+  },
+  {
+    title: 'Contact',
+    links: [
+      { label: 'Start a project', href: `mailto:${meta.email}?subject=Project%20enquiry%20%E2%80%94%20Studio%20COKA` },
+      { label: 'Book a talk', href: `mailto:${meta.email}?subject=Speaking%20enquiry%20%E2%80%94%20Crystal%20Kizor` },
+      { label: 'Press & media', href: `mailto:${meta.email}?subject=Collaboration%20%26%20press` },
+      { label: 'Accessibility', href: '#accessibility' },
+    ],
+  },
+] as const;
+
+const iconFor = {
+  Instagram: 'instagram',
+  X: 'x',
+  LinkedIn: 'linkedin',
+  YouTube: 'youtube',
+} as const;
+---
+
+<footer class="on-dark border-t border-sand-deep bg-night text-sand/70">
+  <div class="shell">
+    <!-- Top band: the affordance, not a wall of links -->
+    <div
+      class="grid gap-12 border-b border-sand/10 py-16 lg:grid-cols-[1.1fr_1fr] lg:gap-20 lg:py-20"
+    >
+      <div class="flex flex-col items-start gap-6">
+        <Wordmark tone="dark" />
+        <p class="max-w-[34ch] font-display text-h3 leading-[1.15] text-linen">
+          Design for the climate you actually have.
+        </p>
+        <p class="max-w-[42ch] text-small leading-relaxed text-sand/60">
+          Studio COKA takes on a limited number of projects each year. Tell us the site, the scope
+          and the stage you are at.
+        </p>
+        <a
+          href={`mailto:${meta.email}?subject=Project%20enquiry%20%E2%80%94%20Studio%20COKA`}
+          class="link-rule text-body font-medium text-linen"
+        >
+          {meta.email}
+        </a>
+      </div>
+
+      <div class="grid gap-10 sm:grid-cols-2 lg:gap-x-12">
+        {
+          columns.map((col) => (
+            <nav aria-label={col.title} class="flex flex-col gap-4">
+              <h2 class="eyebrow text-ochre">{col.title}</h2>
+              <ul class="flex flex-col gap-2.5">
+                {col.links.map((link) => (
+                  <li>
+                    <a
+                      href={link.href}
+                      class="text-small text-sand/65 transition-colors duration-150 hover:text-linen"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Middle band: contact facts + social -->
+    <div
+      class="flex flex-col gap-8 border-b border-sand/10 py-10 md:flex-row md:items-center md:justify-between"
+    >
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8">
+        <p class="flex items-center gap-2.5 text-small text-sand/60">
+          <Icon name="map-pin" class="size-4 shrink-0 text-ochre" />
+          {meta.location}
+        </p>
+        <p class="flex items-center gap-2.5 text-small text-sand/60">
+          <Icon name="mail" class="size-4 shrink-0 text-ochre" />
+          <a
+            href={`mailto:${meta.email}`}
+            class="link-rule decoration-sand/30 hover:decoration-current"
+          >
+            {meta.email}
+          </a>
+        </p>
+      </div>
+
+      <ul class="flex flex-wrap items-center gap-2">
+        {
+          socials.map((social) => (
+            <li>
+              <a
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group inline-flex items-center gap-2 rounded-[2px] border border-sand/15 px-3.5 py-2 text-micro text-sand/70 transition-colors duration-200 hover:border-sand/40 hover:text-linen"
+              >
+                <Icon name={iconFor[social.label]} class="size-4 shrink-0" />
+                <span class="whitespace-nowrap">{social.handle}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- Bottom band -->
+    <div
+      class="flex flex-col gap-4 py-8 text-[0.8125rem] text-sand/55 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>© {year} Crystal Kizor. All rights reserved.</p>
+      <p class="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <span>Site by Crystal Kizor</span>
+        <a href="#accessibility" class="link-rule decoration-sand/25 hover:decoration-current">
+          Accessibility statement
+        </a>
+        <a href="#top" class="link-rule decoration-sand/25 hover:decoration-current">
+          Back to top
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>

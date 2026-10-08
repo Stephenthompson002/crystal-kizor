@@ -1,0 +1,88 @@
+---
+/**
+ * SectionHead — the consistent way every major section introduces itself.
+ * Keeps eyebrow / heading / lede rhythm identical across the page.
+ */
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lede?: string;
+  align?: 'left' | 'center';
+  tone?: 'light' | 'dark';
+  level?: 'h2' | 'h3';
+  id?: string;
+  class?: string;
+  /** Max characters per line for the lede, for comfortable reading. */
+  width?: 'narrow' | 'wide';
+}
+
+const {
+  eyebrow,
+  title,
+  lede,
+  align = 'left',
+  tone = 'light',
+  level = 'h2',
+  id,
+  class: className = '',
+  width = 'narrow',
+} = Astro.props;
+
+const Tag = level;
+const isDark = tone === 'dark';
+const isCenter = align === 'center';
+---
+
+<div
+  class={[
+    'flex flex-col gap-5',
+    isCenter ? 'items-center text-center' : 'items-start',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ')}
+>
+  {
+    eyebrow && (
+      <p
+        class={[
+          'eyebrow flex items-center gap-2.5',
+          isDark ? 'text-ochre' : 'text-clay',
+        ].join(' ')}
+      >
+        <span
+          aria-hidden="true"
+          class={`inline-block h-px w-6 ${isDark ? 'bg-ochre/60' : 'bg-clay/50'}`}
+        />
+        {eyebrow}
+      </p>
+    )
+  }
+
+  <Tag
+    id={id}
+    class={[
+      'text-h2 max-w-[22ch]',
+      isCenter && 'text-balance',
+      isDark ? 'text-linen' : 'text-ink',
+    ]
+      .filter(Boolean)
+      .join(' ')}
+  >
+    {title}
+  </Tag>
+
+  {
+    lede && (
+      <p
+        class={[
+          'text-lead leading-[1.62]',
+          width === 'narrow' ? 'max-w-[46ch]' : 'max-w-[62ch]',
+          isDark ? 'text-sand/75' : 'text-ink-soft',
+        ].join(' ')}
+      >
+        {lede}
+      </p>
+    )
+  }
+</div>

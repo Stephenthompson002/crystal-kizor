@@ -1,0 +1,211 @@
+---
+import BeforeAfter from '../components/BeforeAfter.astro';
+import Button from '../components/Button.astro';
+import Figure from '../components/Figure.astro';
+import Icon from '../components/Icon.astro';
+import StatValue from '../components/StatValue.astro';
+import { coka, proofStats, meta } from '../data/site';
+import { projects, alsoInPortfolio } from '../data/projects';
+
+const projectMailto = `mailto:${meta.email}?subject=Project%20enquiry%20%E2%80%94%20Studio%20COKA`;
+const flagship = projects.find((p) => p.id === 'tesh')!;
+const withImages = projects.filter((p) => p.id !== 'tesh' && p.image);
+
+/**
+ * True only once both halves of the flagship comparison have a real photograph.
+ * The caption reads from this rather than asserting that photographs exist.
+ */
+const comparisonIsComplete = Boolean(
+  flagship.beforeAfter?.before.image && flagship.beforeAfter?.after.image,
+);
+---
+
+<section id="work" aria-labelledby="work-title" class="section-y bg-linen">
+  <div class="shell">
+    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-16">
+      <div class="flex flex-col gap-5">
+        <p class="eyebrow flex items-center gap-2.5 text-clay">
+          <span aria-hidden="true" class="inline-block h-px w-6 bg-clay/50"></span>
+          Selected work
+        </p>
+        <h2 id="work-title" class="text-h2 max-w-[16ch] text-ink">Proof, not mood boards.</h2>
+      </div>
+      <p class="max-w-[40ch] text-body leading-relaxed text-ink-soft md:pb-2">
+        Every project here was judged on how it feels to stand inside it — and on whether it still
+        works when the power goes out.
+      </p>
+    </div>
+
+    <!-- Flagship: the strongest evidence, given the strongest treatment. -->
+    <article
+      class="on-dark mt-14 grid overflow-hidden rounded-[2px] bg-night text-sand/75 shadow-lift-lg lg:grid-cols-12"
+      data-reveal
+    >
+      <div class="flex flex-col justify-center gap-6 border-b border-sand/10 p-8 sm:p-10 lg:col-span-5 lg:border-b-0 lg:border-r lg:p-12">
+        <p class="eyebrow flex items-center gap-2.5 text-ochre">
+          <span aria-hidden="true" class="inline-block h-px w-6 bg-ochre/60"></span>
+          {coka.flagship.eyebrow}
+        </p>
+
+        <div class="flex flex-col gap-3">
+          <h3 class="text-h3 max-w-[20ch] text-linen">{flagship.title}</h3>
+          <p class="text-micro leading-relaxed text-sand/55">
+            {flagship.place}<br />{flagship.year} · operating since 2020
+          </p>
+        </div>
+
+        <dl class="grid grid-cols-3 gap-x-5 gap-y-4 border-t border-sand/15 pt-6">
+          {
+            proofStats.slice(0, 3).map((stat) => (
+              <div class="flex flex-col gap-1.5">
+                <dt class="font-display text-[1.5rem] leading-none text-linen">
+                  <StatValue value={stat.value} />
+                </dt>
+                <dd class="text-[0.6875rem] leading-snug text-sand/55">{stat.label}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <div class="flex flex-col gap-6 p-8 sm:p-10 lg:col-span-7 lg:p-12">
+        <p class="text-body leading-relaxed text-sand/80">{coka.flagship.body}</p>
+        <p class="border-l border-ochre/40 pl-4 text-small italic leading-relaxed text-sand/65">
+          {coka.flagship.note}
+        </p>
+
+        <div class="mt-auto flex flex-col gap-4 pt-2">
+          <p class="text-micro leading-relaxed text-sand/50">
+            The hospital is in clinical use, so photography is subject to patient privacy. A
+            private walkthrough and imagery can be arranged for press and research.
+          </p>
+          <a
+            href={coka.flagship.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="link-rule inline-flex w-fit items-center gap-2 text-small font-semibold text-linen decoration-sand/30 hover:decoration-current"
+            data-track="work-flagship-case-study"
+          >
+            Full case study on studiocoka.com
+            <Icon name="arrow-up-right" class="size-3.5" strokeWidth={2.2} />
+            <span class="sr-only">(opens in a new tab)</span>
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Before and after: the same building, before the renovation and after it.
+         The caption only claims photographs once both frames are supplied. -->
+    {
+      flagship.beforeAfter && (
+        <div class="mt-16 grid gap-8 lg:grid-cols-12 lg:gap-x-16" data-reveal>
+          <div class="flex flex-col gap-4 lg:col-span-4 lg:pt-2">
+            <p class="eyebrow flex items-center gap-2.5 text-clay">
+              <span aria-hidden="true" class="inline-block h-px w-6 bg-clay/50"></span>
+              Before and after
+            </p>
+            <h3 class="text-h3 text-ink">The same building, transformed.</h3>
+            <p class="text-micro leading-relaxed text-ink-mute">
+              {comparisonIsComplete
+                ? 'Drag the handle to compare the existing residential building with the hospital it became. Photographs by Studio COKA.'
+                : 'Drag the handle to compare the existing residential building with the hospital it became. The two frames are drawing plates for now — the practice has not released before-and-after photography of this building, and nothing from another project stands in for it.'}
+            </p>
+          </div>
+          <div class="lg:col-span-8">
+            <BeforeAfter
+              id="tesh-before-after"
+              before={flagship.beforeAfter.before}
+              after={flagship.beforeAfter.after}
+              ratio="16/10"
+            />
+          </div>
+        </div>
+      )
+    }
+
+    <!-- The built work, with the supplied photography -->
+    <div class="mt-20 flex flex-col gap-20 lg:gap-24">
+      {
+        withImages.map((project, index) => (
+          <article
+            id={project.id}
+            class="grid gap-8 lg:grid-cols-12 lg:gap-x-16"
+            data-reveal
+            style={`--reveal-delay:${Math.min(index, 2) * 60}ms`}
+          >
+            <div class="lg:col-span-7">
+              <Figure
+                src={project.image}
+                width={1600}
+                height={1200}
+                alt={project.imageAlt ?? project.title}
+                ratio={index % 2 === 0 ? '3/2' : '4/3'}
+                sizes="(min-width: 1024px) 56vw, 100vw"
+                class="shadow-lift"
+              />
+            </div>
+
+            <div class="flex flex-col gap-6 lg:col-span-5 lg:pt-4">
+              <div class="flex flex-col gap-3">
+                <p class="eyebrow text-clay">{project.type}</p>
+                <h3 class="text-h3 text-ink">{project.title}</h3>
+                <p class="text-micro text-ink-mute">{project.place}</p>
+              </div>
+
+              <p class="max-w-[46ch] text-body leading-relaxed text-ink-soft">{project.note}</p>
+
+              {project.gallery && (
+                <ul class="mt-2 grid grid-cols-3 gap-2.5" role="list">
+                  {project.gallery.map((shot) => (
+                    <li>
+                      <Figure
+                        src={shot.image}
+                        width={1600}
+                        height={1067}
+                        alt={shot.alt}
+                        ratio="1/1"
+                        sizes="(min-width: 1024px) 17vw, 30vw"
+                        class="rounded-[2px]"
+                      />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    <!-- Register of public work with no supplied assets -->
+    <div class="mt-20 border-t border-sand-deep pt-8">
+      <h3 class="eyebrow text-ink-mute">Also in the practice portfolio</h3>
+      <ul class="mt-5 divide-y divide-sand-deep" role="list">
+        {
+          alsoInPortfolio.map((project) => (
+            <li class="flex flex-wrap items-baseline gap-x-5 gap-y-1 py-4">
+              <span class="font-display text-h4 leading-tight text-ink">{project.title}</span>
+              <span class="text-micro text-ink-soft">{project.place}</span>
+              <span class="text-micro text-ink-mute">·</span>
+              <span class="text-micro text-ink-mute">{project.type}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-6 max-w-[64ch] text-micro leading-relaxed text-ink-mute">
+        Imagery for these is held by the practice and available on request. They are listed rather
+        than illustrated so that nothing on this page is attributed to the wrong project.
+      </p>
+    </div>
+
+    <!-- Closing CTA for the commercial path -->
+    <div
+      class="mt-16 flex flex-col gap-5 border-t border-sand-deep pt-9 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p class="font-display text-h4 text-ink">Building something in Nigeria or West Africa?</p>
+      <Button href={projectMailto} icon="arrow-right" data-track="work-send-brief">
+        Send a short brief
+      </Button>
+    </div>
+  </div>
+</section>

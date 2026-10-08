@@ -1,0 +1,185 @@
+---
+import Figure from '../components/Figure.astro';
+import Icon from '../components/Icon.astro';
+import { meta, socials } from '../data/site';
+import portraitEditorial from '../assets/work/portrait-editorial.webp';
+
+/**
+ * Contact is email-first by design. Every path opens a pre-filled mail draft,
+ * which means: no fake form that silently drops enquiries, no backend to
+ * maintain, and a distinct subject line per audience so routing and
+ * measurement work from day one.
+ */
+const paths = [
+  {
+    icon: 'building',
+    title: 'Start a project',
+    body: 'Homes, healthcare, commercial or civic. Send the site, the scope and the stage you are at.',
+    subject: 'Project enquiry — Studio COKA',
+    body_lines: ['Project type:', 'Location:', 'Stage:', 'Timeline & budget range:'],
+  },
+  {
+    icon: 'book',
+    title: 'Join the teaching',
+    body: 'The Tropical Design Framework waitlist, guest lectures, or TEA collaborations.',
+    subject: 'Tropical Design Framework — waitlist',
+    body_lines: ['Name:', 'Role / studio:', 'Country:', 'What I want to learn:'],
+  },
+  {
+    icon: 'mic',
+    title: 'Book a talk',
+    body: 'Keynotes, panels, workshops and guest lectures on climate, design and African cities.',
+    subject: 'Speaking enquiry — Crystal Kizor',
+    body_lines: ['Event:', 'Date & location:', 'Audience:', 'Format:', 'Budget range:'],
+  },
+  {
+    icon: 'users',
+    title: 'Partner or press',
+    body: 'Media, research, product partnerships, or backing the initiatives.',
+    subject: 'Collaboration & press',
+    body_lines: ['Organisation:', 'What I am proposing:', 'Deadline:'],
+  },
+] as const;
+
+const mailto = (subject: string, lines: readonly string[]) =>
+  `mailto:${meta.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n') + '\n')}`;
+---
+
+<section id="contact" aria-labelledby="contact-title" class="relative section-y bg-sand">
+  <div
+    aria-hidden="true"
+    class="blueprint pointer-events-none absolute inset-0 opacity-60 [mask-image:radial-gradient(80%_70%_at_50%_0%,#000_0%,transparent_90%)]"
+  >
+  </div>
+
+  <div class="shell relative">
+    <div class="grid gap-12 lg:grid-cols-12 lg:items-end lg:gap-x-16">
+      <div class="flex flex-col gap-6 lg:col-span-7">
+        <div class="flex flex-col gap-5">
+          <p class="eyebrow flex items-center gap-2.5 text-clay">
+            <span aria-hidden="true" class="inline-block h-px w-6 bg-clay/50"></span>
+            Next step
+          </p>
+          <h2 id="contact-title" class="text-h2 max-w-[18ch] text-ink">
+            Tell us what you are building.
+          </h2>
+        </div>
+        <p class="max-w-[46ch] text-body leading-relaxed text-ink-soft">
+          Pick the path that fits. Each one opens a short, pre-filled draft — edit it, delete what
+          does not apply, and send. Every draft reaches Crystal directly.
+        </p>
+      </div>
+
+      <div class="lg:col-span-5">
+        <Figure
+          src={portraitEditorial}
+          width={1600}
+          height={1280}
+          alt="Crystal Kizor seated in a wooden armchair in a tailored brown blazer, beside a large woven planter and a wall of drawings"
+          ratio="5/4"
+          sizes="(min-width: 1024px) 40vw, 100vw"
+          class="shadow-lift"
+        />
+      </div>
+    </div>
+
+    <!-- Audience-specific contact paths -->
+    <ul class="mt-14 grid gap-6 sm:grid-cols-2 xl:grid-cols-4" role="list">
+      {
+        paths.map((path, i) => (
+          <li class="flex">
+            <a
+              href={mailto(path.subject, path.body_lines)}
+              class="group flex h-full w-full flex-col gap-5 rounded-[2px] border border-ink/12 bg-paper p-7 transition duration-200 ease-[cubic-bezier(0.22,0.61,0.36,1)] hover:-translate-y-0.5 hover:border-clay/40 hover:shadow-lift"
+              data-reveal
+              data-track={`contact-${path.title.toLowerCase().replace(/[^a-z]+/g, "-").replace(/^-|-$/g, "")}`}
+              style={`--reveal-delay:${i * 60}ms`}
+            >
+              <span class="flex items-center justify-between gap-4">
+                <Icon name={path.icon} class="size-6 text-clay" strokeWidth={1.4} />
+                <span aria-hidden="true" class="tabular font-display text-[0.8125rem] text-ink-mute">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+              </span>
+
+              <span class="font-display text-h4 leading-tight text-ink">{path.title}</span>
+              <span class="text-small leading-relaxed text-ink-soft">{path.body}</span>
+
+              <span class="mt-auto flex items-center gap-2 pt-1 text-micro font-semibold text-clay">
+                Open a draft
+                <Icon
+                  name="arrow-up-right"
+                  class="size-3.5 shrink-0 transition-transform duration-200 ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  strokeWidth={2.2}
+                />
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <!-- Direct details -->
+    <div
+      class="mt-14 flex flex-col gap-8 border-t border-ink/12 pt-9 lg:flex-row lg:items-start lg:justify-between lg:gap-16"
+    >
+      <dl class="grid gap-8 sm:grid-cols-2 sm:gap-x-14">
+        <div class="flex flex-col gap-2">
+          <dt class="eyebrow text-ink-mute">Email</dt>
+          <dd>
+            <a href={`mailto:${meta.email}`} class="link-rule text-body font-medium text-ink">
+              {meta.email}
+            </a>
+          </dd>
+        </div>
+        <div class="flex flex-col gap-2">
+          <dt class="eyebrow text-ink-mute">Based in</dt>
+          <dd class="text-body text-ink">{meta.location}</dd>
+        </div>
+      </dl>
+
+      <ul class="flex flex-wrap items-center gap-2" role="list">
+        {
+          socials.map((social) => (
+            <li>
+              <a
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 rounded-[2px] border border-ink/15 px-3.5 py-2 text-micro font-medium text-ink-soft transition-colors duration-200 hover:border-ink/40 hover:text-ink"
+              >
+                {social.label}
+                <Icon name="arrow-up-right" class="size-3" strokeWidth={2.2} />
+                <span class="sr-only">(opens in a new tab)</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- Accessibility statement — specific, not boilerplate -->
+    <div
+      id="accessibility"
+      class="mt-14 grid gap-6 rounded-[2px] border border-ink/12 bg-linen/70 p-7 sm:p-8 lg:grid-cols-[auto_1fr] lg:gap-x-12"
+    >
+      <h3 class="eyebrow text-ink-mute lg:pt-1">Accessibility</h3>
+      <div class="flex max-w-[68ch] flex-col gap-3 text-small leading-relaxed text-ink-soft">
+        <p>
+          This site targets WCAG 2.2 AA: semantic landmarks, a skip link, a keyboard-visible focus
+          ring, body contrast of at least 4.5:1, and a full
+          <span class="font-medium text-ink">prefers-reduced-motion</span> path — every animation
+          here is additive, never something you have to sit through.
+        </p>
+        <p>
+          The page works without JavaScript: content, navigation and every contact link are in the
+          HTML. If anything here is hard to use, email
+          <a href={`mailto:${meta.email}?subject=Accessibility%20issue`} class="link-rule text-ink">
+            {meta.email}
+          </a>
+          and it will be fixed.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,107 @@
+---
+import BrandMark from '../components/BrandMark.astro';
+import Figure from '../components/Figure.astro';
+import Icon from '../components/Icon.astro';
+import { credentials, meta } from '../data/site';
+import portraitAbout from '../assets/work/portrait-about.webp';
+---
+
+<section id="about" aria-labelledby="about-title" class="section-y bg-linen">
+  <div class="shell">
+    <div class="grid gap-14 lg:grid-cols-12 lg:gap-x-16">
+      <!-- Portrait + pull quote -->
+      <div class="flex flex-col gap-10 lg:col-span-5">
+        <Figure
+          src={portraitAbout}
+          width={1200}
+          height={1500}
+          alt="Crystal Kizor at her desk, hand to her chin, with plans, elevations and material samples pinned to the wall behind her"
+          ratio="4/5"
+          sizes="(min-width: 1024px) 40vw, 100vw"
+          class="shadow-lift"
+        />
+
+        <blockquote class="flex flex-col gap-5 border-t border-sand-deep pt-8">
+          <p class="font-display text-h3 leading-[1.18] text-ink">
+            “The richness of a place is in its stories, in its history, in its people. People come
+            and go, but the buildings remain.”
+          </p>
+          <footer class="flex flex-col gap-3">
+            <BrandMark mark="signature" class="h-7 text-clay" />
+            <span class="text-micro text-ink-soft">
+              Crystal Kizor, speaking to Reuters on climate-smart design in Nsukka, 2026
+            </span>
+          </footer>
+        </blockquote>
+      </div>
+
+      <!-- The throughline -->
+      <div class="flex flex-col gap-8 lg:col-span-7 lg:pt-2">
+        <div class="flex flex-col gap-5">
+          <p class="eyebrow flex items-center gap-2.5 text-clay">
+            <span aria-hidden="true" class="inline-block h-px w-6 bg-clay/50"></span>
+            About Crystal
+          </p>
+          <h2 id="about-title" class="text-h2 max-w-[18ch] text-ink">
+            Architecture first. Everything else follows.
+          </h2>
+        </div>
+
+        <div class="flex max-w-[62ch] flex-col gap-5 text-body leading-relaxed text-ink-soft">
+          <p>
+            Crystal Kizor is an architect, interior designer, entrepreneur and speaker based in
+            Nigeria. Her design journey began at 19 with a curiosity about sustainable architecture;
+            she was 23 when she led the renovation that turned a dilapidated building in Nsukka into
+            <strong class="font-semibold text-ink">Nigeria’s first fully off-grid hospital</strong>.
+          </p>
+          <p>
+            That project set the pattern everything since has followed — research before form,
+            comfort before cooling, the site’s own material before the market’s, and the people who
+            use a building before the photograph of it. It is why the hospital has run for six years
+            on its own power, and why patient visits rose by 400%.
+          </p>
+          <p>
+            Today she leads <strong class="font-semibold text-ink">Studio COKA</strong>, teaches what
+            the practice has learned through <strong class="font-semibold text-ink">The Effective
+            Architect</strong>, speaks on African cities and climate, and builds three further
+            initiatives. They look different on the surface. They all begin from the same place: that
+            design and opportunity change how people live.
+          </p>
+        </div>
+
+        <!-- Credentials -->
+        <div class="mt-4 flex flex-col gap-5">
+          <h3 class="eyebrow text-ink-mute">Recognition &amp; roles</h3>
+          <ul class="border-t border-sand-deep">
+            {
+              credentials.map((item) => (
+                <li class="flex items-start gap-3.5 border-b border-sand-deep py-4">
+                  <Icon name="check" class="mt-1 size-3.5 shrink-0 text-clay" strokeWidth={2.4} />
+                  <span class="text-small leading-relaxed text-ink-soft">{item.label}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="mt-2 flex flex-wrap items-center gap-x-7 gap-y-3">
+          <a
+            href="#contact"
+            class="group inline-flex items-center gap-2.5 text-small font-semibold text-clay"
+          >
+            Press, media &amp; research enquiries
+            <Icon
+              name="arrow-right"
+              class="size-4 transition-transform duration-200 ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:translate-x-1"
+              strokeWidth={2.2}
+            />
+          </a>
+          <p class="flex items-center gap-2.5 text-micro text-ink-soft">
+            <Icon name="map-pin" class="size-3.5 shrink-0 text-ink-mute" />
+            {meta.location}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

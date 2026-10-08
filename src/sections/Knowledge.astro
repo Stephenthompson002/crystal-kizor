@@ -1,0 +1,167 @@
+---
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import Figure from '../components/Figure.astro';
+import { tea, speaking, meta } from '../data/site';
+import portraitTea from '../assets/work/portrait-tea.webp';
+import portraitSpeaking from '../assets/work/portrait-speaking.webp';
+
+const waitlistMailto = `mailto:${meta.email}?subject=Tropical%20Design%20Framework%20%E2%80%94%20waitlist&body=Name%3A%0ARole%2Fstudio%3A%0ACountry%3A%0AWhat%20I%20want%20to%20learn%3A%0A`;
+const speakingMailto = `mailto:${meta.email}?subject=Speaking%20enquiry%20%E2%80%94%20Crystal%20Kizor&body=Event%3A%0ADate%20%26%20location%3A%0AAudience%3A%0AFormat%3A%0ABudget%20range%3A%0A`;
+---
+
+<section id="knowledge" aria-labelledby="knowledge-title" class="on-dark section-y bg-night text-sand/75">
+  <div class="shell">
+    <div class="grid gap-8 lg:grid-cols-12 lg:gap-x-16">
+      <div class="flex flex-col gap-5 lg:col-span-7">
+        <p class="eyebrow flex items-center gap-2.5 text-ochre">
+          <span aria-hidden="true" class="inline-block h-px w-6 bg-ochre/60"></span>
+          Knowledge layer
+        </p>
+        <h2 id="knowledge-title" class="text-h2 max-w-[20ch] text-linen">
+          Teaching what the work taught her.
+        </h2>
+      </div>
+      <p class="text-body leading-relaxed text-sand/65 lg:col-span-5 lg:pt-3">
+        The practice generates the knowledge, and the knowledge is given away. Studios,
+        practitioners and students in hot climates get the thinking behind the buildings — not a
+        gallery of them.
+      </p>
+    </div>
+
+    <!-- Two panels: education (primary) and speaking (secondary) -->
+    <div class="mt-16 grid gap-6 lg:grid-cols-12 lg:gap-8">
+      <!-- The Effective Architect -->
+      <article
+        id="tea"
+        class="flex flex-col gap-7 rounded-[2px] border border-sand/12 bg-[#1a1613] p-8 sm:p-10 lg:col-span-7"
+        data-reveal
+      >
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="eyebrow text-ochre">Education &amp; media</span>
+          <span
+            class="rounded-full border border-ochre/35 px-3 py-1 text-[0.6875rem] font-medium text-ochre"
+          >
+            {tea.programme.status}
+          </span>
+        </div>
+
+        <Figure
+          src={portraitTea}
+          width={1600}
+          height={1067}
+          alt="Crystal Kizor at a desk with a laptop and a microphone, hand to her chin, in front of a full bookshelf"
+          ratio="3/2"
+          sizes="(min-width: 1024px) 56vw, 100vw"
+          tone="dark"
+          class="border border-sand/12"
+        />
+
+        <div class="flex flex-col gap-4">
+          <h3 class="text-h3 text-linen">{tea.name}</h3>
+          <p class="text-small leading-relaxed text-sand/60">{tea.body}</p>
+        </div>
+
+        <!-- The programme -->
+        <div class="flex flex-col gap-5 rounded-[2px] border border-sand/12 bg-night/60 p-6 sm:p-7">
+          <div class="flex flex-col gap-2.5">
+            <h4 class="font-display text-h4 leading-tight text-linen">{tea.programme.name}</h4>
+            <p class="text-small leading-relaxed text-sand/60">{tea.programme.body}</p>
+          </div>
+
+          <ul class="flex flex-wrap gap-2" role="list">
+            {
+              tea.pillars.map((pillar) => (
+                <li class="rounded-full border border-sand/15 px-3 py-1.5 text-[0.75rem] text-sand/60">
+                  {pillar}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="mt-auto flex flex-wrap items-center gap-x-6 gap-y-3">
+          <Button
+            href={waitlistMailto}
+            variant="light"
+            size="md"
+            icon="arrow-right"
+            data-track="tea-waitlist"
+          >
+            Join the waitlist
+          </Button>
+          <p class="text-micro text-sand/55">Free to join. No spam, no drip sequence.</p>
+        </div>
+      </article>
+
+      <!-- Speaking -->
+      <article
+        id="speaking"
+        class="flex flex-col gap-7 rounded-[2px] border border-sand/12 bg-[#1a1613] p-8 sm:p-10 lg:col-span-5"
+        data-reveal
+        style="--reveal-delay:80ms"
+      >
+        <span class="eyebrow text-ochre">{speaking.role}</span>
+
+        <div class="flex flex-col gap-4">
+          <h3 class="text-h3 text-linen">Speaking</h3>
+          <p class="text-small leading-relaxed text-sand/60">{speaking.body}</p>
+        </div>
+
+        <Figure
+          src={portraitSpeaking}
+          width={1200}
+          height={1600}
+          alt="Crystal Kizor standing with her arms folded in a brown blazer, in front of a studio wall of drawings and material samples"
+          ratio="1/1"
+          sizes="(min-width: 1024px) 40vw, 100vw"
+          tone="dark"
+          class="border border-sand/12"
+        />
+
+        <div class="flex flex-col gap-4">
+          <h4 class="eyebrow text-sand/58">Talks in the repertoire</h4>
+          <ul class="flex flex-col gap-2.5" role="list">
+            {
+              speaking.topics.map((topic) => (
+                <li class="flex items-start gap-3 text-small leading-snug text-sand/70">
+                  <Icon name="minus" class="mt-2 size-3 shrink-0 text-ochre" strokeWidth={2.4} />
+                  {topic}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="flex flex-col gap-4 border-t border-sand/12 pt-6">
+          <h4 class="eyebrow text-sand/58">Formats</h4>
+          <ul class="flex flex-wrap gap-2" role="list">
+            {
+              speaking.formats.map((format) => (
+                <li class="rounded-full border border-sand/15 px-3 py-1.5 text-[0.75rem] text-sand/60">
+                  {format}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="mt-auto flex flex-col gap-5 pt-2">
+          <p class="flex items-center gap-2.5 text-micro text-sand/50">
+            <Icon name="mic" class="size-3.5 shrink-0 text-ochre" />
+            Previously at {speaking.past}
+          </p>
+          <Button
+            href={speakingMailto}
+            variant="light"
+            size="md"
+            icon="arrow-right"
+            data-track="speaking-request"
+          >
+            Request Crystal to speak
+          </Button>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>

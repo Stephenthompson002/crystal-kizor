@@ -1,0 +1,83 @@
+---
+import Icon from './Icon.astro';
+
+/**
+ * One button component, four variants, three sizes.
+ * Renders an <a> when `href` is present, a <button> otherwise.
+ */
+interface Props {
+  href?: string;
+  variant?: 'solid' | 'outline' | 'ghost' | 'light';
+  size?: 'sm' | 'md' | 'lg';
+  icon?: 'arrow-right' | 'arrow-up-right' | 'mail' | 'plus' | 'arrow-down' | 'play';
+  external?: boolean;
+  class?: string;
+  type?: 'button' | 'submit';
+  [key: string]: unknown;
+}
+
+const {
+  href,
+  variant = 'solid',
+  size = 'md',
+  icon,
+  external = false,
+  class: className = '',
+  type = 'button',
+  ...rest
+} = Astro.props;
+
+const base =
+  'group inline-flex items-center justify-center gap-2.5 font-sans font-semibold tracking-[-0.005em] rounded-[2px] transition duration-200 ease-[cubic-bezier(0.22,0.61,0.36,1)] whitespace-nowrap';
+
+const variants = {
+  solid: 'bg-clay text-paper hover:bg-clay-deep active:bg-clay-deep shadow-[0_1px_2px_rgb(23_19_15/0.12)]',
+  outline:
+    'border border-ink/20 text-ink hover:border-ink/55 hover:bg-ink/[0.035] active:bg-ink/[0.06]',
+  ghost: 'text-ink hover:bg-ink/[0.05] active:bg-ink/[0.08]',
+  light: 'bg-paper text-ink hover:bg-sand active:bg-sand-deep shadow-[0_1px_2px_rgb(23_19_15/0.16)]',
+} as const;
+
+const sizes = {
+  sm: 'text-micro px-4 py-2.5',
+  md: 'text-small px-5.5 py-3.5',
+  lg: 'text-body px-7 py-4',
+} as const;
+
+const classes = [base, variants[variant], sizes[size], className].filter(Boolean).join(' ');
+const isExternal = external || (href?.startsWith('http') ?? false);
+
+// Nudge the icon in the direction it points, on hover.
+const iconShift =
+  icon === 'arrow-up-right'
+    ? 'group-hover:translate-x-0.5 group-hover:-translate-y-0.5'
+    : icon === 'arrow-down'
+      ? 'group-hover:translate-y-0.5'
+      : icon === 'mail'
+        ? 'group-hover:-translate-y-0.5'
+        : 'group-hover:translate-x-0.5';
+---
+
+{
+  href ? (
+    <a
+      href={href}
+      class={classes}
+      {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      {...rest}
+    >
+      <slot />
+      {icon && (
+        <Icon
+          name={icon}
+          class={`size-[1.05em] shrink-0 transition-transform duration-200 ease-[cubic-bezier(0.22,0.61,0.36,1)] ${iconShift}`}
+        />
+      )}
+    </a>
+  ) : (
+    <button type={type} class={classes} {...rest}>
+      <slot />
+      {icon && <Icon name={icon} class="size-[1.05em] shrink-0" />}
+    </button>
+  )
+}

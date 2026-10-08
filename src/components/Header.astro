@@ -1,0 +1,210 @@
+---
+import { nav, meta } from '../data/site';
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+import Wordmark from './Wordmark.astro';
+
+const projectMailto = `mailto:${meta.email}?subject=Project%20enquiry%20%E2%80%94%20Studio%20COKA`;
+---
+
+<header
+  id="site-header"
+  class="no-print fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow] duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] border-b border-transparent"
+  data-header
+>
+  <div class="shell">
+    <div class="flex h-16 items-center justify-between gap-6 md:h-18">
+      <a href="#top" class="shrink-0 rounded-[2px]" aria-label="Crystal Kizor — back to top">
+        <Wordmark />
+      </a>
+
+      <!-- Desktop navigation -->
+      <nav aria-label="Primary" class="hidden lg:block">
+        <ul class="flex items-center gap-1">
+          {
+            nav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="inline-block rounded-[2px] px-3.5 py-2 text-small font-medium text-ink-soft transition-colors duration-150 hover:text-ink"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <Button href="#contact" variant="ghost" size="sm" class="hidden sm:inline-flex">
+          Contact
+        </Button>
+        <Button href={projectMailto} size="sm" icon="arrow-right" class="hidden md:inline-flex">
+          Start a project
+        </Button>
+
+        <!-- Mobile trigger -->
+        <button
+          type="button"
+          id="menu-open"
+          class="inline-flex size-10 items-center justify-center rounded-[2px] text-ink transition-colors hover:bg-ink/[0.05] lg:hidden"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          aria-label="Open menu"
+        >
+          <Icon name="menu" class="size-6" strokeWidth={1.75} />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile / tablet panel -->
+  <div
+    id="mobile-menu"
+    class="fixed inset-0 z-50 hidden lg:hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Site menu"
+    data-menu-panel
+  >
+    <div class="absolute inset-0 bg-ink/45 backdrop-blur-[2px]" data-menu-backdrop></div>
+
+    <div
+      class="absolute inset-x-0 top-0 max-h-[92dvh] overflow-y-auto border-b border-sand-deep bg-linen shadow-lift-lg"
+    >
+      <div class="shell">
+        <div class="flex h-16 items-center justify-between">
+          <Wordmark />
+          <button
+            type="button"
+            id="menu-close"
+            class="inline-flex size-10 items-center justify-center rounded-[2px] text-ink transition-colors hover:bg-ink/[0.05]"
+            aria-label="Close menu"
+          >
+            <Icon name="close" class="size-6" strokeWidth={1.75} />
+          </button>
+        </div>
+
+        <nav aria-label="Mobile" class="pb-6 pt-2">
+          <ul class="divide-y divide-sand-deep border-y border-sand-deep">
+            {
+              nav.map((item, i) => (
+                <li>
+                  <a
+                    href={item.href}
+                    class="flex items-center justify-between gap-4 py-4 font-display text-h4 text-ink transition-colors hover:text-clay"
+                    data-menu-link
+                  >
+                    {item.label}
+                    <span class="eyebrow text-ink-mute tabular">{String(i + 1).padStart(2, '0')}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+
+          <div class="mt-6 flex flex-col gap-3">
+            <Button href={projectMailto} icon="arrow-right" size="lg" class="w-full">
+              Start a project
+            </Button>
+            <Button href="#contact" variant="outline" size="lg" class="w-full">
+              Contact Crystal
+            </Button>
+          </div>
+
+          <p class="mt-6 text-micro text-ink-soft">
+            {meta.location}
+          </p>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  // ---------------------------------------------------------------------------
+  // Mobile menu — accessible open/close, Escape to dismiss, scroll lock.
+  // ---------------------------------------------------------------------------
+  const openBtn = document.getElementById('menu-open');
+  const closeBtn = document.getElementById('menu-close');
+  const panel = document.querySelector<HTMLElement>('[data-menu-panel]');
+  const backdrop = document.querySelector<HTMLElement>('[data-menu-backdrop]');
+  const links = panel?.querySelectorAll('[data-menu-link]') ?? [];
+
+  let lastFocused: HTMLElement | null = null;
+
+  const isOpen = () => panel && !panel.classList.contains('hidden');
+
+  function openMenu() {
+    if (!panel) return;
+    lastFocused = document.activeElement as HTMLElement;
+    panel.classList.remove('hidden');
+    openBtn?.setAttribute('aria-expanded', 'true');
+    document.documentElement.style.overflow = 'hidden';
+    closeBtn?.focus();
+  }
+
+  function closeMenu() {
+    if (!panel) return;
+    panel.classList.add('hidden');
+    openBtn?.setAttribute('aria-expanded', 'false');
+    document.documentElement.style.overflow = '';
+    lastFocused?.focus();
+  }
+
+  openBtn?.addEventListener('click', openMenu);
+  closeBtn?.addEventListener('click', closeMenu);
+  backdrop?.addEventListener('click', closeMenu);
+  links.forEach((link) => link.addEventListener('click', closeMenu));
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && isOpen()) closeMenu();
+    // Close the panel if the viewport grows into the desktop breakpoint.
+    if (event.key === 'Tab' && isOpen()) {
+      const focusables = panel!.querySelectorAll<HTMLElement>('a[href], button');
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+  });
+
+  const desktopQuery = window.matchMedia('(min-width: 1024px)');
+  desktopQuery.addEventListener('change', (event) => {
+    if (event.matches && isOpen()) closeMenu();
+  });
+
+  // ---------------------------------------------------------------------------
+  // Header surface — transparent over the hero, solid once the page moves.
+  // ---------------------------------------------------------------------------
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  if (header) {
+    let ticking = false;
+    const update = () => {
+      const scrolled = window.scrollY > 24;
+      header.classList.toggle('bg-linen/88', scrolled);
+      header.classList.toggle('backdrop-blur-md', scrolled);
+      header.classList.toggle('border-sand-deep', scrolled);
+      header.classList.toggle('shadow-[0_1px_0_rgb(23_19_15/0.02)]', scrolled);
+      ticking = false;
+    };
+    update();
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true }
+    );
+  }
+</script>

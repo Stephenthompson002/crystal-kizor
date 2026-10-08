@@ -1,0 +1,25 @@
+---
+import NairaMark from './NairaMark.astro';
+
+/**
+ * StatValue — renders a headline figure.
+ *
+ * The only reason this is a component at all: the naira sign has no glyph in
+ * either brand font, so it is drawn (see NairaMark) and everything else is set
+ * as ordinary type. The text remains the accessible value either way.
+ */
+interface Props {
+  value: string;
+  class?: string;
+}
+
+const { value, class: className = '' } = Astro.props;
+
+const needsNaira = value.includes('₦');
+const [naira, rest] = needsNaira ? ['₦', value.replace('₦', '')] : [null, value];
+---
+
+<span class={`inline-flex items-baseline gap-[0.06em] tabular ${className}`}>
+  {naira && <NairaMark class="h-[0.66em]" />}
+  <span>{rest}</span>
+</span>
