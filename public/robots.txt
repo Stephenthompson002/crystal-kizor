@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://crystalkizor.com/sitemap-index.xml

@@ -1,6 +1,8 @@
 ---
+import Figure from '../components/Figure.astro';
 import Icon from '../components/Icon.astro';
 import { meta, socials } from '../data/site';
+import { media } from '../data/media';
 
 /**
  * Contact is email-first by design. Every path opens a pre-filled mail draft,
@@ -105,22 +107,33 @@ const mailto = (subject: string, lines: readonly string[]) =>
 
     <!-- Direct details -->
     <div
-      class="mt-14 flex flex-col gap-8 border-t border-ink/12 pt-9 lg:flex-row lg:items-start lg:justify-between lg:gap-16"
+      class="mt-14 flex flex-col gap-10 border-t border-ink/12 pt-9 lg:flex-row lg:items-start lg:justify-between lg:gap-16"
     >
-      <dl class="grid gap-8 sm:grid-cols-2 sm:gap-x-14">
-        <div class="flex flex-col gap-2">
-          <dt class="eyebrow text-ink-mute">Email</dt>
-          <dd>
-            <a href={`mailto:${meta.email}`} class="link-rule text-body font-medium text-ink">
-              {meta.email}
-            </a>
-          </dd>
-        </div>
-        <div class="flex flex-col gap-2">
-          <dt class="eyebrow text-ink-mute">Based in</dt>
-          <dd class="text-body text-ink">{meta.location}</dd>
-        </div>
-      </dl>
+      <div class="flex flex-col gap-8 sm:flex-row sm:items-start sm:gap-10">
+        <Figure
+          src={media.portraitContact}
+          ratio="1/1"
+          alt="Crystal Kizor at her desk, reviewing drawings beside material samples"
+          label="Crystal Kizor"
+          widths={[200, 320, 480]}
+          sizes="160px"
+          class="w-32 shrink-0 sm:w-40"
+        />
+        <dl class="grid gap-8 sm:grid-cols-2 sm:gap-x-10">
+          <div class="flex flex-col gap-2">
+            <dt class="eyebrow text-ink-mute">Email</dt>
+            <dd>
+              <a href={`mailto:${meta.email}`} class="link-rule text-body font-medium text-ink">
+                {meta.email}
+              </a>
+            </dd>
+          </div>
+          <div class="flex flex-col gap-2">
+            <dt class="eyebrow text-ink-mute">Based in</dt>
+            <dd class="text-body text-ink">{meta.location}</dd>
+          </div>
+        </dl>
+      </div>
 
       <ul class="flex flex-wrap items-center gap-2" role="list">
         {

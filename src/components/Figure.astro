@@ -3,25 +3,23 @@ import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
 
 /**
- * Figure — image slot with a clearly-marked placeholder state.
+ * Figure — the single image slot used everywhere on the page.
  *
- * When `src` is supplied it renders optimised responsive imagery.
- * When it is not, it renders an annotated drawing-sheet placeholder so the
- * gap is deliberate and legible rather than broken. Every placeholder tells
- * the reader exactly what photograph belongs there.
+ * With `src`, it renders optimised responsive imagery through Astro's pipeline
+ * and carries intrinsic dimensions, so nothing shifts as it loads.
+ * Without `src`, it renders an annotated drawing-sheet placeholder that names
+ * the photograph that belongs there. That state is deliberate and legible
+ * rather than a broken image — the brief provides for it explicitly.
  */
 interface Props {
-  /** Local image, imported in the calling component. Left empty → placeholder. */
+  /** Imported image from `src/data/media.ts`. Empty → placeholder. */
   src?: ImageMetadata;
   alt?: string;
-  /** Intrinsic dimensions of `src`, used to generate the responsive srcset. */
-  width?: number;
-  height?: number;
-  /** Drawing-sheet reference, e.g. "01" */
+  /** Drawing-sheet reference, e.g. "03". */
   fig?: string;
-  /** What the final photograph should show. */
+  /** What the final photograph should show, or the caption when filled. */
   label: string;
-  /** Aspect ratio, e.g. "4/3", "3/2", "16/10", "1/1" */
+  /** Aspect ratio, e.g. "4/3", "3/2", "16/10", "4/5". */
   ratio?: string;
   tone?: 'light' | 'dark';
   icon?:
@@ -39,17 +37,20 @@ interface Props {
     | 'drop'
     | 'ruler';
   class?: string;
-  /** Applied to the image/placeholder element itself — e.g. to make it fill. */
+  /** Applied to the image/placeholder element itself, e.g. to make it fill. */
   innerClass?: string;
+  /** Candidate widths for the srcset. Cap these to the source's real size. */
+  widths?: number[];
+  sizes?: string;
   /** Skip lazy-loading for above-the-fold figures. */
   priority?: boolean;
+  /** Overlay a "Visualisation" chip so a render is never read as a photo. */
+  visualisation?: boolean;
 }
 
 const {
   src,
   alt = '',
-  width = 1600,
-  height = 1200,
   fig,
   label,
   ratio = '4/3',
@@ -57,7 +58,10 @@ const {
   icon = 'grid',
   class: className = '',
   innerClass = '',
+  widths = [480, 800, 1200, 1600],
+  sizes = '(min-width: 1024px) 50vw, 100vw',
   priority = false,
+  visualisation = false,
 } = Astro.props;
 
 // Ratios used across the page. Keeping them in one map means Tailwind's
@@ -78,30 +82,35 @@ const aspect = ratioMap[ratio] ?? 'aspect-[4/3]';
 const isDark = tone === 'dark';
 ---
 
-<figure class={`relative overflow-hidden rounded-[2px] ${className}`}>
+<figure class={`relative ${className}`}>
   {
     src ? (
-      <Image
-        src={src}
-        alt={alt || label}
-        width={width}
-        height={height}
-        widths={[480, 800, 1200, 1600]}
-        sizes="(min-width: 1024px) 50vw, 100vw"
-        loading={priority ? 'eager' : 'lazy'}
-        decoding={priority ? 'sync' : 'async'}
-        fetchpriority={priority ? 'high' : 'auto'}
-        class={`${aspect} w-full object-cover ${innerClass}`}
-      />
+      <div class="relative overflow-hidden rounded-[2px]">
+        <Image
+          src={src}
+          alt={alt || label}
+          widths={widths}
+          sizes={sizes}
+          loading={priority ? 'eager' : 'lazy'}
+          decoding={priority ? 'sync' : 'async'}
+          fetchpriority={priority ? 'high' : 'auto'}
+          class={`${aspect} w-full object-cover ${innerClass}`}
+        />
+        {visualisation && (
+          <span class="absolute bottom-3 right-3 rounded-[2px] bg-night/70 px-2.5 py-1.5 text-[0.625rem] font-semibold uppercase tracking-[0.14em] text-linen backdrop-blur-[2px]">
+            Visualisation
+          </span>
+        )}
+      </div>
     ) : (
       <div
         class={[
-          'relative w-full',
+          'relative w-full overflow-hidden rounded-[2px]',
           aspect,
           innerClass,
           isDark
             ? 'bg-[linear-gradient(150deg,#241f1a_0%,#1a1613_55%,#12100e_100%)] text-sand/70'
-            : 'bg-[linear-gradient(150deg,#f2ebdf_0%,#eae0d0_55%,#e0d3c0_100%)] text-ink-mute',
+            : 'bg-[linear-gradient(150deg,#f2ebdf_0%,#eae0d0_55%,#e0d3c0_100%)] text-ink-soft',
           'blueprint',
         ].join(' ')}
         role="img"
@@ -110,21 +119,23 @@ const isDark = tone === 'dark';
         {/* Corner registration ticks — reads as a drawing sheet, not a broken image */}
         <span
           aria-hidden="true"
-          class={`absolute inset-3 border ${
-            isDark ? 'border-sand/15' : 'border-ink/10'
-          }`}
+          class={`absolute inset-3 border ${isDark ? 'border-sand/15' : 'border-ink/10'}`}
         ></span>
-        {['left-3 top-3 border-l border-t', 'right-3 top-3 border-r border-t', 'left-3 bottom-3 border-l border-b', 'right-3 bottom-3 border-r border-b'].map(
-          (pos) => (
-            <span
-              aria-hidden="true"
-              class={`absolute size-3.5 ${pos} ${isDark ? 'border-sand/40' : 'border-ink/30'}`}
-            />
-          )
-        )}
+        {[
+          'left-3 top-3 border-l border-t',
+          'right-3 top-3 border-r border-t',
+          'left-3 bottom-3 border-l border-b',
+          'right-3 bottom-3 border-r border-b',
+        ].map((pos) => (
+          <span
+            aria-hidden="true"
+            class={`absolute size-3.5 ${pos} ${isDark ? 'border-sand/40' : 'border-ink/30'}`}
+          />
+        ))}
 
         {/* Centre mark. Colour comes from the parent so contrast stays exact
-            rather than cumulative: ~5.3:1 on light sheets, ~4.7:1 on dark. */}
+            rather than cumulative: the label is ink-soft on light sheets
+            (≥7.5:1 even over the darkest gradient stop) and sand/58 on dark. */}
         <span class="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
           <Icon
             name={icon}
@@ -132,18 +143,26 @@ const isDark = tone === 'dark';
             strokeWidth={1.25}
           />
           <span class="eyebrow text-[0.625rem] tracking-[0.2em]">
-            <slot name="pending">Image pending</slot>
+            <slot name="pending">Photography pending</slot>
           </span>
         </span>
 
         {/* Sheet annotation */}
         <span class="absolute inset-x-5 bottom-4 flex items-end justify-between gap-4 text-left">
           {fig && <span class="eyebrow text-[0.625rem]">Fig. {fig}</span>}
-          <span class="max-w-[22ch] text-right text-[0.6875rem] font-medium leading-snug">
+          <span class="max-w-[24ch] text-right text-[0.6875rem] font-medium leading-snug">
             {label}
           </span>
         </span>
       </div>
+    )
+  }
+
+  {
+    /* When a real image is present the label becomes a caption underneath,
+       so the drawing-sheet annotation is never lost. */
+    src && label && alt === '' && (
+      <figcaption class="mt-3 text-[0.6875rem] leading-snug text-ink-mute">{label}</figcaption>
     )
   }
 </figure>

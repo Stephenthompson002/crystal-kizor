@@ -1,0 +1,68 @@
+name: Deploy to GitHub Pages
+
+# Runs on the default branch, and can be triggered by hand from the Actions tab.
+# The build is environment-driven (SITE + BASE_PATH), so the same workflow also
+# works unchanged on a custom domain — see README → Deployment.
+on:
+  push:
+    branches: [main, arena/49fc95e0-crystal-kizor]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never cancel a deploy in flight; queue instead, so the live site is never
+# left half-published.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run check
+
+      # Resolves the real Pages URL (origin + base path) so the build never
+      # hard-codes a domain. `enablement: true` also turns Pages on for the
+      # repository the first time this runs.
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Build
+        run: npm run build
+        env:
+          SITE: ${{ steps.pages.outputs.origin }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

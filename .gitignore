@@ -5,6 +5,9 @@ dist/
 # Generated types
 .astro/
 
+# Local build caches (OG card intermediates, asset-pipeline scratch)
+.cache/
+
 # Dependencies
 node_modules/
 

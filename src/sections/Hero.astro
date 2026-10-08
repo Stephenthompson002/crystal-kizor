@@ -3,6 +3,7 @@ import Button from '../components/Button.astro';
 import Figure from '../components/Figure.astro';
 import Icon from '../components/Icon.astro';
 import { meta } from '../data/site';
+import { media } from '../data/media';
 
 const projectMailto = `mailto:${meta.email}?subject=Project%20enquiry%20%E2%80%94%20Studio%20COKA`;
 
@@ -95,10 +96,12 @@ const layers = [
       <div class="lg:col-span-5" data-reveal style="--reveal-delay:160ms">
         <div class="relative">
           <Figure
-            fig="01"
+            src={media.portraitHero}
             ratio="4/5"
-            label="Portrait — Crystal Kizor on site, Nsukka"
-            icon="users"
+            alt="Crystal Kizor in her studio, standing at a table of drawings and material samples"
+            label="Crystal Kizor, Studio COKA"
+            widths={[420, 700, 1024]}
+            sizes="(min-width: 1024px) 40vw, 100vw"
             priority
             class="shadow-lift-lg"
           />

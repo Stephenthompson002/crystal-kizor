@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { meta } from '../data/site';
+import { asset } from '../lib/url';
 
 interface Props {
   title?: string;
@@ -14,8 +15,12 @@ const {
   description = 'Architect, designer and founder of Studio COKA. Climate-responsive architecture and interiors in Nigeria — including Nigeria’s first fully off-grid hospital.',
 } = Astro.props;
 
+// `Astro.site` already carries the configured `base`, and `Astro.url.pathname`
+// includes it too, so canonical URLs stay correct on a subpath deploy.
+const siteRoot = (Astro.site ?? new URL(meta.site)).href;
+const siteUrl = siteRoot.endsWith('/') ? siteRoot.slice(0, -1) : siteRoot;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? meta.site).href;
-const ogImage = new URL('/og.png', Astro.site ?? meta.site).href;
+const ogImage = new URL(asset('/og.png'), Astro.site ?? meta.site).href;
 
 /**
  * Structured data. Kept factual and conservative: the Person node describes
@@ -26,15 +31,15 @@ const jsonLd = {
   '@graph': [
     {
       '@type': 'Person',
-      '@id': `${meta.site}/#person`,
+      '@id': `${siteUrl}/#person`,
       name: 'Crystal Kizor',
       jobTitle: 'Architect, Designer and Founder of Studio COKA',
       description:
         'Architect, interior designer, entrepreneur and speaker based in Nigeria. Founder and lead principal of Studio COKA, architect of Nigeria’s first fully off-grid hospital.',
-      url: meta.site,
+      url: siteUrl,
       email: `mailto:${meta.email}`,
       address: { '@type': 'PostalAddress', addressCountry: 'NG', addressRegion: 'Enugu' },
-      worksFor: { '@id': `${meta.site}/#studiocoka` },
+      worksFor: { '@id': `${siteUrl}/#studiocoka` },
       knowsAbout: [
         'Climate-responsive architecture',
         'Passive cooling and natural ventilation',
@@ -51,15 +56,15 @@ const jsonLd = {
     },
     {
       '@type': 'Organization',
-      '@id': `${meta.site}/#studiocoka`,
+      '@id': `${siteUrl}/#studiocoka`,
       name: 'Studio COKA',
       description:
         'A climate-responsive architecture, interior design and design-build studio working in Nigeria and across West Africa.',
       url: 'https://studiocoka.com',
-      founder: { '@id': `${meta.site}/#person` },
+      founder: { '@id': `${siteUrl}/#person` },
       areaServed: 'West Africa',
     },
-    { '@type': 'WebSite', '@id': `${meta.site}/#website`, url: meta.site, name: meta.name },
+    { '@type': 'WebSite', '@id': `${siteUrl}/#website`, url: siteUrl, name: meta.name },
   ],
 };
 
@@ -96,21 +101,22 @@ const themeColor = '#faf7f2';
          brand face rather than swapping a beat later. -->
     <link
       rel="preload"
-      href="/fonts/fraunces-var.woff2"
+      href={asset('/fonts/fraunces-var.woff2')}
       as="font"
       type="font/woff2"
       crossorigin
     />
     <link
       rel="preload"
-      href="/fonts/instrument-sans-var.woff2"
+      href={asset('/fonts/instrument-sans-var.woff2')}
       as="font"
       type="font/woff2"
       crossorigin
     />
 
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="icon" href={asset('/icon-192.png')} type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href={asset('/apple-touch-icon.png')} />
+    <link rel="manifest" href={asset('/site.webmanifest')} />
 
     <Fragment
       set:html={`<script type="application/ld+json">${JSON.stringify(jsonLd).replace(

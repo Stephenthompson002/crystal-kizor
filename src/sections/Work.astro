@@ -1,15 +1,13 @@
 ---
+import { Image } from 'astro:assets';
 import Figure from '../components/Figure.astro';
 import Icon from '../components/Icon.astro';
 import StatValue from '../components/StatValue.astro';
 import { coka, proofStats, meta } from '../data/site';
+import { media } from '../data/media';
 
 const projectMailto = `mailto:${meta.email}?subject=Project%20enquiry%20%E2%80%94%20Studio%20COKA`;
 const flagshipUrl = 'https://studiocoka.com/projects/nigeria-first-off-grid-hospital';
-
-// The register: everything that is not the flagship, presented as a project
-// schedule rather than a grid of thumbnails.
-const register = coka.work.filter((project) => !project.featured);
 ---
 
 <section id="work" aria-labelledby="work-title" class="section-y bg-linen">
@@ -20,9 +18,7 @@ const register = coka.work.filter((project) => !project.featured);
           <span aria-hidden="true" class="inline-block h-px w-6 bg-clay/50"></span>
           Selected work
         </p>
-        <h2 id="work-title" class="text-h2 max-w-[16ch] text-ink">
-          Proof, not mood boards.
-        </h2>
+        <h2 id="work-title" class="text-h2 max-w-[16ch] text-ink">Proof, not mood boards.</h2>
       </div>
       <p class="max-w-[40ch] text-body leading-relaxed text-ink-soft md:pb-2">
         Every project here was judged on how it feels to stand inside it — and on whether it still
@@ -30,35 +26,37 @@ const register = coka.work.filter((project) => !project.featured);
       </p>
     </div>
 
-    <!-- Flagship -->
+    <!-- ── Flagship ─────────────────────────────────────────────────────── -->
     <article
       class="on-dark mt-14 grid overflow-hidden rounded-[2px] bg-night text-sand/75 shadow-lift-lg lg:grid-cols-12"
       data-reveal
     >
-      <div class="lg:col-span-7">
+      <div class="lg:col-span-6">
         <Figure
           fig="03"
           ratio="4/3"
           tone="dark"
-          icon="building"
-          label="The atrium — translucent roof bringing daylight into the hospital"
+          icon="sun"
+          label={coka.flagship.pendingShot}
           class="h-full"
-          innerClass="lg:aspect-auto lg:min-h-[26rem] lg:h-full"
-        />
+          innerClass="lg:aspect-auto lg:min-h-[30rem] lg:h-full"
+        >
+          <span slot="pending" class="eyebrow text-[0.625rem] tracking-[0.2em]"
+            >Photography pending</span
+          >
+        </Figure>
       </div>
 
-      <div class="flex flex-col gap-6 p-8 sm:p-10 lg:col-span-5 lg:p-12">
+      <div class="flex flex-col gap-6 p-8 sm:p-10 lg:col-span-6 lg:p-12">
         <p class="eyebrow flex items-center gap-2.5 text-ochre">
           <span aria-hidden="true" class="inline-block h-px w-6 bg-ochre/60"></span>
           Flagship case study
         </p>
 
         <div class="flex flex-col gap-3">
-          <h3 class="text-h3 max-w-[20ch] text-linen">{coka.flagship.title}</h3>
-          <p class="text-micro leading-relaxed text-sand/50">
-            {coka.flagship.place}
-            <br />
-            {coka.flagship.years}
+          <h3 class="text-h3 max-w-[22ch] text-linen">{coka.flagship.title}</h3>
+          <p class="text-micro leading-relaxed text-sand/55">
+            {coka.flagship.place}<br />{coka.flagship.years}
           </p>
         </div>
 
@@ -75,9 +73,7 @@ const register = coka.work.filter((project) => !project.featured);
                 <dt class="font-display text-[1.5rem] leading-none text-linen">
                   <StatValue value={stat.value} />
                 </dt>
-                <dd class="text-[0.6875rem] leading-snug text-sand/50">
-                  {stat.label}
-                </dd>
+                <dd class="text-[0.6875rem] leading-snug text-sand/55">{stat.label}</dd>
               </div>
             ))
           }
@@ -96,51 +92,87 @@ const register = coka.work.filter((project) => !project.featured);
       </div>
     </article>
 
-    <!-- Project register -->
-    <div class="mt-20">
-      <h3 class="eyebrow text-ink-mute">Also in the portfolio</h3>
+    <!-- ── Projects ─────────────────────────────────────────────────────── -->
+    <div class="mt-24 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <h3 class="eyebrow text-ink-mute">Built, in progress and on the boards</h3>
+      <p class="max-w-[42ch] text-micro leading-relaxed text-ink-soft sm:text-right">
+        Photography where the building exists; where a project is still on the boards, you are looking
+        at a visualisation and it is labelled as one.
+      </p>
+    </div>
 
-      <ol class="mt-7 border-t border-sand-deep" role="list">
-        {
-          register.map((project, i) => (
-            <li
-              class="group border-b border-sand-deep"
-              data-reveal
-              style={`--reveal-delay:${i * 70}ms`}
-            >
-              <div class="grid grid-cols-1 gap-x-8 gap-y-2 py-6 md:grid-cols-12 md:items-baseline">
-                <span
-                  aria-hidden="true"
-                  class="tabular font-display text-[0.9375rem] leading-none text-ink-mute md:col-span-1"
-                >
-                  {String(i + 2).padStart(2, '0')}
+    <div class="mt-8 flex flex-col gap-20 lg:gap-24">
+      {
+        coka.work.map((project, index) => (
+          <article
+            class="grid gap-8 lg:grid-cols-12 lg:gap-x-14"
+            data-reveal
+          >
+            {/* Lead image */}
+            <div class={`lg:col-span-7 ${index % 2 === 1 ? 'lg:order-2' : ''}`}>
+              <Figure
+                src={media[project.lead]}
+                ratio="4/3"
+                alt={`${project.title} — ${project.place}`}
+                label={project.note.slice(0, 90) + '…'}
+                visualisation={project.medium === 'visualisation'}
+                widths={[520, 900, 1400]}
+                sizes="(min-width: 1024px) 58vw, 100vw"
+                class="shadow-lift"
+              />
+            </div>
+
+            {/* Record */}
+            <div class={`flex flex-col gap-5 lg:col-span-5 lg:pt-2 ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
+              <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                <span class="eyebrow text-clay">
+                  {String(index + 1).padStart(2, '0')} — {project.type}
                 </span>
+                <span class="eyebrow text-ink-mute">{project.medium === 'visualisation' ? 'Design stage' : project.year}</span>
+              </div>
 
-                <h4 class="font-display text-h4 leading-tight text-ink md:col-span-4">
-                  {project.title}
-                </h4>
-
-                <p class="text-micro leading-relaxed text-ink-soft md:col-span-2">
+              <div class="flex flex-col gap-2">
+                <h4 class="text-h3 text-ink">{project.title}</h4>
+                <p class="flex items-center gap-2 text-micro text-ink-soft">
+                  <Icon name="map-pin" class="size-3.5 shrink-0 text-ink-mute" />
                   {project.place}
                 </p>
-
-                <p class="text-micro text-ink-mute md:col-span-2">{project.type}</p>
-
-                <p class="text-small leading-relaxed text-ink-soft md:col-span-3">
-                  {project.note}
-                </p>
               </div>
-            </li>
-          ))
-        }
-      </ol>
 
-      <div
-        class="mt-9 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-10"
-      >
-        <p class="max-w-[46ch] text-small leading-relaxed text-ink-soft">
-          “{coka.testimonial.quote}” — {coka.testimonial.attribution},{' '}
-          {coka.testimonial.context}
+              <p class="max-w-[46ch] text-small leading-relaxed text-ink-soft">{project.note}</p>
+            </div>
+
+            {/* Supporting captures, when the project has them */}
+            {project.captures.length > 0 && (
+              <div class="grid gap-5 sm:grid-cols-3 lg:col-span-12">
+                {project.captures.map((capture) => (
+                  <figure class="flex flex-col gap-3">
+                    <Image
+                      src={media[capture.key]}
+                      alt={capture.caption}
+                      widths={[320, 520, 760]}
+                      sizes="(min-width: 640px) 30vw, 100vw"
+                      loading="lazy"
+                      decoding="async"
+                      class="aspect-[4/3] w-full rounded-[2px] object-cover"
+                    />
+                    <figcaption class="text-[0.6875rem] leading-snug text-ink-mute">
+                      {capture.caption}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            )}
+          </article>
+        ))
+      }
+    </div>
+
+    <!-- ── Closing ──────────────────────────────────────────────────────── -->
+    <div class="mt-24 flex flex-col gap-6 border-t border-sand-deep pt-9">
+      <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between sm:gap-10">
+        <p class="max-w-[52ch] text-small leading-relaxed text-ink-soft">
+          “{coka.testimonial.quote}” — {coka.testimonial.attribution}, {coka.testimonial.context}
         </p>
         <a
           href="https://studiocoka.com"
@@ -153,23 +185,22 @@ const register = coka.work.filter((project) => !project.featured);
           <span class="sr-only">(opens in a new tab)</span>
         </a>
       </div>
-    </div>
 
-    <!-- Closing CTA for the commercial path -->
-    <div class="mt-16 flex flex-col gap-5 border-t border-sand-deep pt-9 sm:flex-row sm:items-center sm:justify-between">
-      <p class="font-display text-h4 text-ink">Building something in Nigeria or West Africa?</p>
-      <a
-        href={projectMailto}
-        class="group inline-flex w-fit items-center gap-2.5 text-small font-semibold text-clay"
-        data-track="work-send-brief"
-      >
-        Send a short brief
-        <Icon
-          name="arrow-right"
-          class="size-4 transition-transform duration-200 ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:translate-x-1"
-          strokeWidth={2.2}
-        />
-      </a>
+      <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <p class="font-display text-h4 text-ink">Building something in Nigeria or West Africa?</p>
+        <a
+          href={projectMailto}
+          class="group inline-flex w-fit items-center gap-2.5 text-small font-semibold text-clay"
+          data-track="work-send-brief"
+        >
+          Send a short brief
+          <Icon
+            name="arrow-right"
+            class="size-4 transition-transform duration-200 ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:translate-x-1"
+            strokeWidth={2.2}
+          />
+        </a>
+      </div>
     </div>
   </div>
 </section>

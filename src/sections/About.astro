@@ -2,6 +2,7 @@
 import Figure from '../components/Figure.astro';
 import Icon from '../components/Icon.astro';
 import { credentials, meta } from '../data/site';
+import { media } from '../data/media';
 ---
 
 <section id="about" aria-labelledby="about-title" class="section-y bg-linen">
@@ -10,10 +11,12 @@ import { credentials, meta } from '../data/site';
       <!-- Portrait + pull quote -->
       <div class="flex flex-col gap-10 lg:col-span-5">
         <Figure
-          fig="04"
+          src={media.portraitEditorial}
           ratio="4/5"
-          label="Portrait — Crystal Kizor, Lagos, Nigeria"
-          icon="users"
+          alt="Crystal Kizor seated in conversation, beside a planting and a stack of architecture books"
+          label="Crystal Kizor"
+          widths={[420, 700, 1200]}
+          sizes="(min-width: 1024px) 40vw, 100vw"
           class="shadow-lift"
         />
 

@@ -171,42 +171,65 @@ export const coka = {
     years: '2018 – 2019 · operating since 2020',
     body: 'An existing residential building, kept and transformed. A translucent roof brings daylight into the atrium so the lights can stay off. An elevated roof structure moves hot air out and pulls cooler air through. A standalone solar and inverter system took the building off the national grid — so surgery does not wait for power to come back.',
     note: 'The brief was personal: the client is an ophthalmologist who saw patients travelling out of Nsukka for specialist care. The design had to make people want to walk in.',
+    /** No TESH photography was supplied; this names what is still needed. */
+    pendingShot: 'The atrium under the translucent roof — the single image this page most needs',
   },
+  /**
+   * `medium` matters on a page whose whole argument is "measured, not
+   * asserted": a visualisation must never be read as a photograph of a
+   * finished building, so the distinction is carried in the data and rendered
+   * as a chip on the image.
+   *
+   * `captures` are keys into `src/data/media.ts`.
+   */
   work: [
     {
-      title: 'The Eye Specialists Hospital',
-      place: 'Nsukka, Enugu',
-      type: 'Healthcare · Renovation',
-      note: 'Nigeria’s first fully off-grid hospital',
-      featured: true,
-    },
-    {
-      title: 'International Event Center',
+      title: 'Nature Home',
       place: 'Enugu, Nigeria',
-      type: 'Civic · Cultural',
-      note: 'Deep overhangs and a layered envelope cut heat gain before mechanical cooling is needed.',
-      featured: false,
-    },
-    {
-      title: 'Garden Home',
-      place: 'Kigali, Rwanda',
-      type: 'Residential',
-      note: 'A tropical home designed around airflow, shade and the garden it sits in.',
-      featured: false,
-    },
-    {
-      title: 'Pine Towers',
-      place: 'Enugu, Nigeria',
-      type: 'Mixed use',
-      note: 'Residential and commercial volume shaped by orientation and daylight.',
-      featured: false,
+      type: 'Private residential',
+      year: 'Built',
+      medium: 'photograph',
+      note: 'A family home planned around the existing trees rather than around the plot. Deep cantilevers shade the glazing, the garden becomes the corridor, and the main rooms open on two sides so air can cross them.',
+      lead: 'natureHomeEntry',
+      captures: [
+        { key: 'natureHomeCantilever', caption: 'Cantilevered shade over the entrance walk' },
+        { key: 'natureHomeInterior', caption: 'Living room, daylight only' },
+        { key: 'natureHomeSide', caption: 'The tree the plan was built around' },
+      ],
     },
     {
       title: 'Nature Home 2',
       place: 'Enugu, Nigeria',
       type: 'Private residential',
-      note: 'Passive comfort as the starting point, not a later upgrade.',
-      featured: false,
+      year: 'In progress',
+      medium: 'visualisation',
+      note: 'The second house on the same brief, pushed further: a shaded outdoor room carries the daily life of the house, and the wellness wing is daylit and cross-ventilated so it does not need cooling.',
+      lead: 'natureHome2Approach',
+      captures: [
+        { key: 'natureHome205', caption: 'Bedroom opening to the garden and water' },
+        { key: 'natureHome206', caption: 'Living and dining under a timber roof, lit from above' },
+        { key: 'natureHome2Wellness', caption: 'Wellness wing — clerestory daylight and cross ventilation' },
+      ],
+    },
+    {
+      title: 'Community Centre',
+      place: 'Nigeria',
+      type: 'Civic · Community',
+      year: 'Design',
+      medium: 'visualisation',
+      note: 'A public building organised around one retained tree. A timber roof ring shades the courtyard, and the social rooms sit under it in the round — the oldest idea in tropical building, kept.',
+      lead: 'communityCentreCourt',
+      captures: [],
+    },
+    {
+      title: 'Studio COKA workspace',
+      place: 'Enugu, Nigeria',
+      type: 'Studio fit-out',
+      year: 'Built',
+      medium: 'photograph',
+      note: 'The practice’s own workspace: a clerestory above the stair brings daylight deep into the plan, and a timber ceiling keeps it soft rather than hot.',
+      lead: 'studioAtrium',
+      captures: [],
     },
   ],
   testimonial: {
