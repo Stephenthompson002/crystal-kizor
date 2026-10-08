@@ -1,0 +1,44 @@
+---
+import BrandMark from './BrandMark.astro';
+
+/**
+ * Wordmark — the header/footer lockup.
+ *
+ * The supplied identity uses a very wide, light, high-contrast serif for
+ * "CRYSTAL KIZOR". That exact face is not distributable, so the name is set in
+ * the site's own display face with the tracking opened up to match the
+ * logo's proportions.
+ *
+ * This is a deliberate trade: an SVG of the drawn wordmark would be pixel-exact
+ * but ~18 KB heavier, unselectable, and invisible to search engines. The
+ * monogram — the distinctive half of the identity — is used exactly as drawn,
+ * and the name stays as real text.
+ */
+interface Props {
+  tone?: 'light' | 'dark';
+  /** Hide the name and show the monogram alone, for tight spaces. */
+  markOnly?: boolean;
+  class?: string;
+}
+
+const { tone = 'light', markOnly = false, class: className = '' } = Astro.props;
+---
+
+<span class={`flex items-center gap-3 ${className}`}>
+  <BrandMark
+    mark="monogram"
+    class={`h-[1.55rem] ${tone === 'dark' ? 'text-ochre' : 'text-ink'}`}
+    title={markOnly ? 'Crystal Kizor' : undefined}
+  />
+  {
+    !markOnly && (
+      <span
+        class={`font-display text-[0.9375rem] leading-none tracking-[0.19em] uppercase ${
+          tone === 'dark' ? 'text-linen' : 'text-ink'
+        }`}
+      >
+        Crystal Kizor
+      </span>
+    )
+  }
+</span>

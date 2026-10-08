@@ -16,10 +16,11 @@ npm install
 npm run dev          # http://localhost:4321
 npm run build        # static output in dist/
 npm run preview      # serve the build locally
-npm run check        # astro check — types and a11y-ish diagnostics
+npm run check        # astro check — types and diagnostics
+npm run verify       # check + build + audit + word counts (the pre-push gate)
 ```
 
-Requires Node 18+. No environment variables, no API keys, no backend.
+Requires Node 18+. No environment variables, no API keys, no backend, no database.
 
 ---
 
@@ -40,32 +41,55 @@ Requires Node 18+. No environment variables, no API keys, no backend.
 
 ```
 crystal-kizor/
-├── astro.config.mjs            # site URL, Tailwind via Vite, sitemap, dev-host allowlist
+├── astro.config.mjs            # site URL, base path, Tailwind via Vite, sitemap, dev-host allowlist
+├── .github/workflows/deploy.yml# build + publish to GitHub Pages on push
 ├── scripts/
-│   └── subset-fonts.py         # regenerates public/fonts (documented, run on demand)
+│   ├── extract-marks.mjs       # crops the five lockups out of the supplied logo sheet
+│   ├── trace-marks.py          # vectorises those crops to SVG
+│   ├── build-images.mjs        # crops/resizes the supplied photography into src/assets/work
+│   ├── build-brand-assets.py   # writes public/favicon.svg and public/og.png from the monogram
+│   ├── subset-fonts.py         # regenerates public/fonts
+│   ├── audit.py                # markup, contrast, glyph and payload checks on the build
+│   └── word-count.py           # checks the written submission against the brief's limits
 ├── public/
-│   ├── favicon.svg
-│   ├── og.png                  # 1200×630 social card, generated from the brand fonts
-│   └── fonts/
-│       ├── fraunces-var.woff2          31.9 KB   display, axis: opsz
-│       └── instrument-sans-var.woff2   27.6 KB   UI, axis: wght
+│   ├── favicon.svg             # generated: the CK monogram on a linen tile
+│   ├── icon-192.png            # generated app icons, from the same tile
+│   ├── icon-512.png
+│   ├── apple-touch-icon.png
+│   ├── og.png                  # generated: 1200×630 social card
+│   └── brand/
+│       ├── monogram.svg        # traced mark, used as a CSS mask
+│       └── signature.svg       # traced script signature
+├── assets-src/                 # the untouched client-supplied assets (git-ignored, 54 MB)
 └── src/
+    ├── assets/
+    │   ├── brand/              # the same two traced marks, as source
+    │   ├── fonts/              # fraunces-var.woff2 (31.9 KB) + instrument-sans-var.woff2 (27.6 KB)
+    │   └── work/               # 24 processed .webp frames (4.2 MB, committed)
     ├── data/
-    │   └── site.ts             # ← ALL COPY LIVES HERE. Single source of truth.
+    │   ├── site.ts             # ← ALL COPY LIVES HERE. Single source of truth.
+    │   └── projects.ts         # the project register, with its own images and alt text
     ├── styles/
     │   └── global.css          # design tokens (@theme), base layer, custom utilities
     ├── layouts/
     │   └── Base.astro          # <head>, SEO, JSON-LD, skip link, global scripts
+    ├── lib/
+    │   └── url.ts              # base-aware helpers for public/ paths
+    ├── pages/
+    │   ├── index.astro         # composes the sections; the page order IS the IA
+    │   ├── robots.txt.ts       # robots.txt derived from `site` + `base`
+    │   └── site.webmanifest.ts # the manifest, with base-aware icons and scope
     ├── components/
+    │   ├── BrandMark.astro     # the traced marks as a currentColor CSS mask
     │   ├── Button.astro        # 4 variants × 3 sizes, renders <a> or <button>
-    │   ├── Figure.astro        # image slot with a marked placeholder state
+    │   ├── Figure.astro        # responsive image, or a clearly marked placeholder
     │   ├── Footer.astro        # 4 link columns + contact band + socials
     │   ├── Header.astro        # sticky header + accessible mobile panel
     │   ├── Icon.astro          # inline SVG set
-    │   ├── Logo.astro          # wordmark + drawn mark
     │   ├── NairaMark.astro     # ₦ drawn as SVG (no glyph in either brand font)
     │   ├── SectionHead.astro   # eyebrow / heading / lede rhythm
-    │   └── StatValue.astro     # headline figures, handles the naira mark
+    │   ├── StatValue.astro     # headline figures, handles the naira mark
+    │   └── Wordmark.astro      # monogram + name, for the header and footer
     ├── sections/               # one file per band, in page order
     │   ├── Hero.astro
     │   ├── Proof.astro
@@ -76,13 +100,11 @@ crystal-kizor/
     │   ├── Knowledge.astro
     │   ├── Initiatives.astro
     │   └── Contact.astro
-    └── pages/
-        └── index.astro         # composes the sections; the page order IS the IA
 ```
 
 **Changing the copy never requires touching a component.** Every string, link, project, stat and
-credential is in `src/data/site.ts`. That file can be swapped for a CMS or a JSON fetch later
-without a single change to the section files.
+credential is in `src/data/`. Those files can be swapped for a CMS or a JSON fetch later without a
+single change to the section files.
 
 ---
 
@@ -96,7 +118,7 @@ The order of sections is the strategy. Each band has one job:
 | 2 | **Proof** | The strongest evidence on the page, immediately after the claim it supports. Dark band, so it reads as a chapter break. |
 | 3 | **Router** | Six audience paths. Placed third, because the page serves six very different visitors and they should not have to scroll to find themselves. |
 | 4 | **Studio COKA** | The commercial core in depth: principles, services, a seven-stage process, a direct CTA. |
-| 5 | **Work** | The flagship as a case study, then the rest as an honest project register. |
+| 5 | **Work** | The flagship as a case study, then the built work with its photography, then an honest register of the rest. |
 | 6 | **About** | The spine that makes six ventures one story rather than a list. |
 | 7 | **Knowledge** | The Effective Architect and Speaking — thought leadership, given real weight without competing with the practice. |
 | 8 | **Initiatives** | ELEvated, AKO Alliance, Alive and Free. Deliberately weighted *below* the practice and the teaching, and weighted differently from each other. |
@@ -130,35 +152,76 @@ transitions are removed entirely.
 
 ---
 
-## Imagery
+## Brand identity
 
-There is no photography in the repository. Every image position renders a **clearly marked
-placeholder**: a drawing-sheet panel with registration ticks, a figure number, and a note stating
-exactly what photograph belongs there (e.g. *“Fig. 03 — The atrium, translucent roof bringing
-daylight into the hospital”*).
+The identity comes from the client's own logo collection (`assets-src/Crystal Kizor Logo
+Collection.png`, five lockups on a cream ground within ~1 % of `--color-linen`). Nothing about it was
+invented, and the earlier bracket mark that stood in for it is gone from the repository.
 
-To drop a real image in, import it and pass it to `Figure`:
+- `scripts/extract-marks.mjs` finds the real cell grid from raw-pixel ink scans and crops the CK
+  monogram and the script signature, banding rows by ink so no lockup's caption comes along for the
+  ride. `scripts/trace-marks.py` vectorises those crops with potrace, normalising each to a
+  100-unit-wide viewBox and emitting one closed contour per curve.
+- The result is two small SVGs — `monogram.svg` (9.3 KB) and `signature.svg` (10.2 KB) — drawn with
+  `fill="currentColor"`. Components render them through `BrandMark.astro` as a **CSS mask**, so one
+  file serves the linen header and the night footer, the mark is never inlined into the HTML
+  response, and it stays a single cacheable request.
+- The wordmark itself is **set in type**, not drawn: an SVG of the drawn lockup would be heavier,
+  unselectable and invisible to search engines. The monogram — the distinctive half of the identity
+  — is used exactly as supplied, and the name stays real text for both readers and crawlers.
+- `scripts/build-brand-assets.py` generates the favicon and the social card from that same monogram,
+  so they cannot drift from the identity. Card text is converted to **outlines** from the site's own
+  subsetted fonts, because a social card must not depend on whatever fonts a scraper happens to
+  have.
 
-```astro
----
-import atrium from '../assets/atrium.jpg';
----
-<Figure src={atrium} width={1600} height={1200} alt="…" label="…" fig="03" />
+```bash
+node scripts/extract-marks.mjs        # → /tmp/marks/*.png
+python3 scripts/trace-marks.py        # → src/assets/brand/*.svg
+python3 scripts/build-brand-assets.py # → public/favicon.svg, public/og.png, public/brand/
 ```
 
-`Figure` then renders a responsive `srcset` at 480/800/1200/1600 px through Astro's image pipeline,
-with correct `width`/`height` so nothing shifts. Placeholders are chosen over stock photography
-deliberately: a generic architecture photo would misrepresent the work, which is the one thing a
-credibility page cannot afford.
+---
 
-**Still needed:** a portrait of Crystal, the hospital atrium and exterior, the International Event
-Center, Garden Home, Pine Towers, Nature Home 2, an interior detail, and an AKO Alliance photograph.
+## Imagery
+
+Twenty-four photographs, all from the folders supplied with the brief, processed by
+`scripts/build-images.mjs`:
+
+| Where | What |
+| --- | --- |
+| Hero | The studio portrait, 4:5, the only eager image on the page. |
+| Studio COKA | A working drawing beside a physical massing model. |
+| Work | Nature Home 2, Nature Home and the Community Centre — a lead frame and a five-frame gallery each. |
+| About | A portrait at the drawing board, with plans pinned to the wall behind. |
+| Knowledge | The podcast desk (TEA) and the standing studio portrait (Speaking). |
+| Contact | The editorial portrait, closing the page. |
+
+**Crop decisions live in a script, not in a GUI session.** Each job declares its source, output name,
+aspect ratio and gravity; the script crops at ratio, applies one light sharpening pass, and encodes
+WebP with a **per-file size budget** (quality steps down only as far as each frame needs, and three
+detail-heavy frames get a median pass rather than being crushed). Running it again reproduces the
+whole image set byte for byte:
+
+```bash
+node scripts/build-images.mjs
+```
+
+**Attribution is by folder.** An image is only shown against the project whose folder it came from.
+The hospital — the flagship — is presented as a written case study with no photograph, because none
+was supplied: illustrating it with another building would be a straightforward misrepresentation. It
+also states plainly that clinical privacy governs its imagery. AKO Alliance keeps a **marked
+placeholder** naming the photograph it wants, and no image is borrowed from the practice to fill it.
+
+Alt text describes each frame as it actually is (checked frame by frame against the file), and where
+a supplied image is a design visualisation rather than a photograph of built work, the copy does not
+claim otherwise.
 
 ---
 
 ## Accessibility
 
-Targets **WCAG 2.2 AA**, and the contrast maths was done rather than assumed.
+Targets **WCAG 2.2 AA**, and the contrast maths was done rather than assumed — `npm run audit` checks
+it on every run.
 
 - The muted text token `--color-ink-mute` (`#6F6558`) was **solved backwards from the requirement**:
   every tertiary label on the page measures ≥ 4.5:1 on linen, sand *and* paper. The original
@@ -167,7 +230,9 @@ Targets **WCAG 2.2 AA**, and the contrast maths was done rather than assumed.
 - Skip link, visible focus ring, focus ring colour switches on dark grounds.
 - Mobile menu is a proper dialog: `aria-expanded`, focus moved in, focus trapped, Escape closes,
   focus returned to the trigger, background scroll locked.
-- All decorative SVG is `aria-hidden`; placeholders expose `role="img"` with a descriptive label.
+- All decorative SVG is `aria-hidden`; the one remaining placeholder exposes `role="img"` with a
+  descriptive label.
+- Every image carries intrinsic dimensions, so nothing shifts while it loads.
 - Full `prefers-reduced-motion` support; the page works with JavaScript disabled.
 - An accessibility statement is on the page itself (`#accessibility`), with a contact route.
 
@@ -175,17 +240,18 @@ Targets **WCAG 2.2 AA**, and the contrast maths was done rather than assumed.
 
 ## Performance
 
-Measured on the production build (`npm run build`), Brotli/gzip transfer sizes:
+Measured on the production build by `scripts/audit.py` (gzipped transfer):
 
 | Asset | Gzipped |
 | --- | --- |
-| `index.html` | 16.8 KB |
-| CSS | 8.0 KB |
+| `index.html` | 19.1 KB |
+| CSS | 8.1 KB |
 | JavaScript | 1.1 KB |
-| Fraunces (subsetted, `opsz` axis) | 32.7 KB |
-| Instrument Sans (subsetted, `wght` axis) | 28.3 KB |
-| `favicon.svg` | 0.3 KB |
-| **First load total** | **≈ 87 KB in 6 requests** |
+| Fraunces (subsetted, `opsz` axis) | 31.9 KB |
+| Instrument Sans (subsetted, `wght` axis) | 27.6 KB |
+| `favicon.svg` | 4.2 KB |
+| Hero photograph (the 800 px candidate a 1440 px screen picks) | 75.4 KB |
+| **First load total** | **≈ 167 KB in 7 requests** |
 
 What gets it there:
 
@@ -193,15 +259,16 @@ What gets it there:
   Yoruba and Igbo render from the brand face rather than a fallback. See
   `scripts/subset-fonts.py` for the measurement table — pinning Fraunces' unused `wght` axis alone
   saved 30.7 KB while keeping the optical-size axis that gives the hero its typography.
-- Both fonts are `preload`ed and use `font-display: swap`, with a fallback stack chosen so the swap
-  is close in proportion rather than a visible reflow.
+- **The other 23 images are lazy** and carry honest `sizes` hints (a gallery thumbnail in a
+  twelve-column grid is ~17vw, not half the page), so the browser downloads the candidate that
+  matches the slot instead of the largest one available.
 - **No third-party requests at all.** No font CDN, no analytics script, no embedded map.
 - Zero framework JS. The only script is progressive enhancement.
-- No layout shift: every media slot has intrinsic dimensions, including the placeholders.
+- No layout shift: every media slot has intrinsic dimensions, including the placeholder.
 - `scroll-padding-top` on `html`, so anchor jumps land below the sticky header instead of under it.
+- The whole image set is 4.2 MB on disk across 24 files; nothing above 400 KB reaches `srcset`.
 - Every class in the markup resolves to generated CSS, and no source class is unused — verified
-  against the built stylesheet (397 rendered tokens, 0 missing, 0 dead). The CSS cannot silently
-  drift from the markup.
+  against the built stylesheet. The CSS cannot silently drift from the markup.
 
 ---
 
@@ -211,7 +278,7 @@ The page ships **no analytics by default** — that is an explicit decision, not
 tracker is a two-line change, and the intent of every call to action is already declared in the
 markup, so nothing needs re-instrumenting:
 
-Every CTA carries a `data-track` label (20 of them):
+Every CTA carries a `data-track` label (21 of them):
 
 ```
 hero-start-project   hero-see-work   hero-layer-the-practice
@@ -238,7 +305,22 @@ consent banner, which keeps the page fast and the visitor's first impression cle
 
 The build is fully static — any host works. `npm run build` produces `dist/`.
 
-### Vercel (recommended)
+Both the origin and the base path come from the environment, so one repository can build for a domain
+root *or* for a project subpath such as `https://<user>.github.io/crystal-kizor/` with no source
+change:
+
+```bash
+SITE=https://crystalkizor.com BASE_PATH=/ npm run build
+SITE=https://<user>.github.io BASE_PATH=/crystal-kizor npm run build
+```
+
+### GitHub Pages (included)
+
+`.github/workflows/deploy.yml` type-checks, builds and publishes to Pages on every push, resolving
+the real Pages URL for `SITE`/`BASE_PATH` automatically. It is what produces the live link for this
+submission; the same workflow works unchanged behind a custom domain.
+
+### Vercel
 
 ```bash
 npm i -g vercel
@@ -246,21 +328,11 @@ vercel            # framework auto-detected as Astro
 vercel --prod
 ```
 
-Or import the repo at vercel.com — no configuration needed. Set `site` in `astro.config.mjs` to the
-live domain first, so canonical URLs, the sitemap and Open Graph tags are correct.
-
-### Netlify
+### Netlify / Cloudflare Pages
 
 ```
-Build command:    npm run build
+Build command:     npm run build
 Publish directory: dist
-```
-
-### Cloudflare Pages
-
-```
-Build command:    npm run build
-Output directory: dist
 ```
 
 ### Any static host / VPS
@@ -272,12 +344,12 @@ rsync -avz dist/ user@host:/var/www/crystalkizor.com/
 
 ### Before going live
 
-1. Set the real domain in `astro.config.mjs` → `SITE`.
+1. Set `SITE` (and `BASE_PATH` if serving from a subpath).
 2. Replace `meta.email` in `src/data/site.ts` with the live inbox (it currently reads
    `hello@crystalkizor.com` as a placeholder, and every contact link derives from it).
 3. Confirm the YouTube channel URL in `socials` (currently a search, because the handle is not
    published on her profiles).
-4. Drop the real photography into `src/assets/` and pass it to each `Figure` (see *Imagery*).
+4. Replace the AKO Alliance placeholder with a real photograph when one exists.
 5. Add the analytics provider (see *Measurement*).
 6. Submit `sitemap-index.xml` in Search Console.
 
@@ -291,27 +363,34 @@ ALLOWED_DEV_HOSTS=".mytunnel.dev,.e2b.app" npm run dev
 
 ---
 
-## Regenerating the fonts
+## Regenerating everything
 
-Only needed if the type system changes. Requires Python + `fonttools` + `brotli`:
+Only needed when the type system, the imagery or the identity changes. `npm run verify` is the gate;
+it runs the type check, the build, the audit and the word counts.
 
 ```bash
-pip install fonttools brotli
-npm run fonts          # rewrites public/fonts/*.woff2
+npm run fonts     # public/fonts — needs Python + fonttools + brotli
+npm run images    # src/assets/work — needs the sources in assets-src/ (git-ignored)
+npm run marks     # src/assets/brand — extract + trace the supplied logo sheet
+npm run brand     # public/favicon.svg, public/og.png, public/brand/
+npm run audit     # markup, contrast, first-load payload, against dist/
+                  #   (add the fontTools venv to also check glyph coverage)
+npm run words     # checks ASSESSMENT.md against the brief's 200/300/250 limits
 ```
 
-Commit the output. Deployment never needs Python. If display weight ever becomes part of the design,
-change `INSTANCE` in `scripts/subset-fonts.py` and the script ships the full `opsz + wght` range
-instead (62.6 KB).
+`assets-src/` holds the untouched client-supplied downloads and is deliberately **not** committed —
+54 MB of camera JPEGs and PNGs have no place in git history. Everything derived from it is
+committed, and every derivation is a script, so the set can be rebuilt from the originals at any
+time. Deployment never needs Python.
 
 ---
 
 ## Sources
 
-Content is drawn from publicly verifiable material only: Studio COKA's own site and project pages,
-Reuters / bird Story Agency coverage of the Nsukka hospital (2026), the TEDx Port Harcourt speaker
-listing, and published award listings. Where a venture has a thin public footprint — ELEvated, AKO
-Alliance, Alive and Free — it is described with the confidence the evidence supports and no invented
-traction.
+Content is drawn from publicly verifiable material only: the brief supplied with the assessment,
+Studio COKA's own site and project pages, Reuters / bird Story Agency coverage of the Nsukka
+hospital (2026), the TEDx Port Harcourt speaker listing, and published award listings. Where a
+venture has a thin public footprint — ELEvated, AKO Alliance, Alive and Free — it is described with
+the confidence the evidence supports and no invented traction.
 
 The brief is treated as the primary source; public material was used only to make specifics accurate.

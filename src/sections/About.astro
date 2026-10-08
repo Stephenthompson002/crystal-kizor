@@ -1,8 +1,9 @@
 ---
+import BrandMark from '../components/BrandMark.astro';
 import Figure from '../components/Figure.astro';
 import Icon from '../components/Icon.astro';
 import { credentials, meta } from '../data/site';
-import { media } from '../data/media';
+import portraitAbout from '../assets/work/portrait-about.webp';
 ---
 
 <section id="about" aria-labelledby="about-title" class="section-y bg-linen">
@@ -11,11 +12,11 @@ import { media } from '../data/media';
       <!-- Portrait + pull quote -->
       <div class="flex flex-col gap-10 lg:col-span-5">
         <Figure
-          src={media.portraitEditorial}
+          src={portraitAbout}
+          width={1200}
+          height={1500}
+          alt="Crystal Kizor at her desk, hand to her chin, with plans, elevations and material samples pinned to the wall behind her"
           ratio="4/5"
-          alt="Crystal Kizor seated in conversation, beside a planting and a stack of architecture books"
-          label="Crystal Kizor"
-          widths={[420, 700, 1200]}
           sizes="(min-width: 1024px) 40vw, 100vw"
           class="shadow-lift"
         />
@@ -25,8 +26,11 @@ import { media } from '../data/media';
             “The richness of a place is in its stories, in its history, in its people. People come
             and go, but the buildings remain.”
           </p>
-          <footer class="text-micro text-ink-soft">
-            Crystal Kizor, speaking to Reuters on climate-smart design in Nsukka, 2026
+          <footer class="flex flex-col gap-3">
+            <BrandMark mark="signature" class="h-7 text-clay" />
+            <span class="text-micro text-ink-soft">
+              Crystal Kizor, speaking to Reuters on climate-smart design in Nsukka, 2026
+            </span>
           </footer>
         </blockquote>
       </div>
@@ -39,7 +43,7 @@ import { media } from '../data/media';
             About Crystal
           </p>
           <h2 id="about-title" class="text-h2 max-w-[18ch] text-ink">
-            Six ventures, one conviction.
+            Architecture first. Everything else follows.
           </h2>
         </div>
 

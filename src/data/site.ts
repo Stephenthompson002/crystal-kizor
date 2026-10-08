@@ -2,13 +2,15 @@
  * Single source of truth for all page content.
  *
  * Editorial rules applied here:
- *  - Claims are limited to information that is publicly verifiable
- *    (Studio COKA's own site, Reuters / bird Story Agency coverage, TEDx
- *    speaker listing, published awards). Nothing is invented.
- *  - Where a brand has a thin public footprint, it is presented with the
- *    confidence its evidence supports — no overstated traction.
- *  - Every one of these values is designed to be replaced from a CMS or
- *    JSON file without touching a component.
+ *  - The brief supplied by Studio COKA (careers@studiocoka.com) is the primary
+ *    source for how each venture is described.
+ *  - Public material is used only to make specifics accurate: Studio COKA's own
+ *    site, Reuters / bird Story Agency coverage of the Nsukka hospital, the
+ *    TEDx Port Harcourt speaker listing, published award listings.
+ *  - Project attribution follows the supplied asset folders. Images that could
+ *    not be attributed to a project are not claimed as one.
+ *  - Where a brand has a thin public footprint (ELEvated, AKO Alliance, Alive
+ *    and Free), it is described with the confidence the evidence supports.
  */
 
 export const meta = {
@@ -20,17 +22,17 @@ export const meta = {
   tagline: 'Buildings that already belong to the climate they stand in.',
 };
 
-/**
- * Social accounts. The first three handles are public and verified.
- * The YouTube entry currently points at a search because the channel handle
- * is not publicly listed anywhere on her profiles — once the channel URL is
- * confirmed, replace the href with it (one line, no component changes).
- */
 export const socials = [
   { label: 'Instagram', handle: '@crystalkizor', href: 'https://www.instagram.com/crystalkizor/' },
   { label: 'X', handle: '@crystal_kizor', href: 'https://x.com/crystal_kizor' },
-  { label: 'LinkedIn', handle: 'Crystal Kizor', href: 'https://www.linkedin.com/in/crystal-kizor/' },
   {
+    label: 'LinkedIn',
+    handle: 'Crystal Kizor',
+    href: 'https://www.linkedin.com/in/crystal-kizor/',
+  },
+  {
+    // Replace with the channel URL once confirmed — the handle is not listed
+    // publicly on any of her profiles, so this points at a search.
     label: 'YouTube',
     handle: 'Crystal Kizor',
     href: 'https://www.youtube.com/results?search_query=crystal+kizor+architecture',
@@ -171,67 +173,8 @@ export const coka = {
     years: '2018 – 2019 · operating since 2020',
     body: 'An existing residential building, kept and transformed. A translucent roof brings daylight into the atrium so the lights can stay off. An elevated roof structure moves hot air out and pulls cooler air through. A standalone solar and inverter system took the building off the national grid — so surgery does not wait for power to come back.',
     note: 'The brief was personal: the client is an ophthalmologist who saw patients travelling out of Nsukka for specialist care. The design had to make people want to walk in.',
-    /** No TESH photography was supplied; this names what is still needed. */
-    pendingShot: 'The atrium under the translucent roof — the single image this page most needs',
+    url: 'https://studiocoka.com/projects/nigeria-first-off-grid-hospital',
   },
-  /**
-   * `medium` matters on a page whose whole argument is "measured, not
-   * asserted": a visualisation must never be read as a photograph of a
-   * finished building, so the distinction is carried in the data and rendered
-   * as a chip on the image.
-   *
-   * `captures` are keys into `src/data/media.ts`.
-   */
-  work: [
-    {
-      title: 'Nature Home',
-      place: 'Enugu, Nigeria',
-      type: 'Private residential',
-      year: 'Built',
-      medium: 'photograph',
-      note: 'A family home planned around the existing trees rather than around the plot. Deep cantilevers shade the glazing, the garden becomes the corridor, and the main rooms open on two sides so air can cross them.',
-      lead: 'natureHomeEntry',
-      captures: [
-        { key: 'natureHomeCantilever', caption: 'Cantilevered shade over the entrance walk' },
-        { key: 'natureHomeInterior', caption: 'Living room, daylight only' },
-        { key: 'natureHomeSide', caption: 'The tree the plan was built around' },
-      ],
-    },
-    {
-      title: 'Nature Home 2',
-      place: 'Enugu, Nigeria',
-      type: 'Private residential',
-      year: 'In progress',
-      medium: 'visualisation',
-      note: 'The second house on the same brief, pushed further: a shaded outdoor room carries the daily life of the house, and the wellness wing is daylit and cross-ventilated so it does not need cooling.',
-      lead: 'natureHome2Approach',
-      captures: [
-        { key: 'natureHome205', caption: 'Bedroom opening to the garden and water' },
-        { key: 'natureHome206', caption: 'Living and dining under a timber roof, lit from above' },
-        { key: 'natureHome2Wellness', caption: 'Wellness wing — clerestory daylight and cross ventilation' },
-      ],
-    },
-    {
-      title: 'Community Centre',
-      place: 'Nigeria',
-      type: 'Civic · Community',
-      year: 'Design',
-      medium: 'visualisation',
-      note: 'A public building organised around one retained tree. A timber roof ring shades the courtyard, and the social rooms sit under it in the round — the oldest idea in tropical building, kept.',
-      lead: 'communityCentreCourt',
-      captures: [],
-    },
-    {
-      title: 'Studio COKA workspace',
-      place: 'Enugu, Nigeria',
-      type: 'Studio fit-out',
-      year: 'Built',
-      medium: 'photograph',
-      note: 'The practice’s own workspace: a clerestory above the stair brings daylight deep into the plan, and a timber ceiling keeps it soft rather than hot.',
-      lead: 'studioAtrium',
-      captures: [],
-    },
-  ],
   testimonial: {
     quote: 'We barely use AC during the day.',
     attribution: 'Private client',
@@ -241,7 +184,6 @@ export const coka = {
     title: 'We take on a limited number of projects each year.',
     body: 'Good work takes focus. If you are building in Nigeria or West Africa and want comfort that does not depend on the grid, send a short brief — site, scope, stage and timeline.',
     action: 'Start a project',
-    href: 'mailto', // resolved at build time from meta.email
   },
 } as const;
 
@@ -254,7 +196,7 @@ export const tea = {
   short: 'TEA',
   descriptor: 'Architecture education and media',
   role: 'The knowledge layer',
-  body: 'Most architects graduate without ever being taught how to design for a hot, humid, unreliable place. TEA exists to close that gap — practical tropical design, taught the way it is actually practised.',
+  body: 'Helping architects and built-environment professionals learn, grow and build better careers. Most graduates are never taught how to design for a hot, humid, unreliable place — TEA exists to close that gap, taught the way the work is actually practised.',
   programme: {
     name: 'The Tropical Design Framework',
     body: 'A structured, practical programme for designing climate-responsive spaces: orientation, shading, ventilation, daylight, material and cost — in the order those decisions actually get made.',
@@ -270,7 +212,7 @@ export const tea = {
 } as const;
 
 export const speaking = {
-  descriptor: 'Talks, panels and workshops',
+  descriptor: 'Talks, conversations and engagements',
   role: 'The thought-leadership layer',
   body: 'Crystal speaks about the buildings we already know how to build — and why we stopped. Talks draw on the off-grid hospital, indigenous ventilation and shading strategies, and the cost argument for designing with the climate rather than against it.',
   topics: [
@@ -292,21 +234,19 @@ export const initiatives = [
   {
     id: 'elevated',
     name: 'ELEvated',
-    descriptor: 'Contemporary furniture & product design',
-    body: 'Functional, well-made furniture and objects rooted in African context, materials and ideas. A product studio in development — briefing partners and early collaborations welcome.',
+    descriptor: 'Furniture & product design',
+    body: 'A contemporary furniture and product design brand creating functional, well-designed products rooted in African context, materials and ideas. A young studio, briefing partners and early collaborations welcome.',
     status: 'In development',
     action: 'Talk to the studio',
-    href: '#contact',
     weight: 'md',
   },
   {
     id: 'ako',
     name: 'AKO Alliance',
     descriptor: 'Access to education and opportunity',
-    body: 'An NGO working to return out-of-school children to the classroom, support families with capital for business, and back ideas that move communities forward.',
+    body: 'An NGO working to return Nigeria’s out-of-school children to the classroom, support families with capital for business, and sponsor ideas that drive progress.',
     status: 'Active initiative',
     action: 'Partner or give',
-    href: '#contact',
     weight: 'lg',
   },
   {
@@ -316,7 +256,6 @@ export const initiatives = [
     body: 'Helping young people walk in truth, healing, freedom, identity, purpose and life in Christ.',
     status: 'Ongoing',
     action: 'Join the community',
-    href: '#contact',
     weight: 'md',
   },
 ] as const;
@@ -326,12 +265,12 @@ export const initiatives = [
 /* -------------------------------------------------------------------------- */
 
 export const credentials = [
-  { label: 'TEDx Port Harcourt speaker', href: null },
-  { label: 'Featured by Reuters / bird Story Agency, 2026', href: null },
-  { label: 'Female Entrepreneur of the Year — Glims Impact Awards, 2025', href: null },
-  { label: 'The Visionaire Award nominee — Global Women Awards, 2025', href: null },
-  { label: 'Business Excellence nominee — African Leading Women Awards, 2026', href: null },
-  { label: 'Founder & Lead Principal, Studio COKA', href: null },
+  { label: 'TEDx Port Harcourt speaker' },
+  { label: 'Featured by Reuters / bird Story Agency, 2026' },
+  { label: 'Female Entrepreneur of the Year — Glims Impact Awards, 2025' },
+  { label: 'The Visionaire Award nominee — Global Women Awards, 2025' },
+  { label: 'Business Excellence nominee — African Leading Women Awards, 2026' },
+  { label: 'Founder & Lead Principal, Studio COKA' },
 ] as const;
 
 /* -------------------------------------------------------------------------- */

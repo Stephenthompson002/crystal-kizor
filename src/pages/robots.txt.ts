@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { asset } from '../lib/url';
+import { meta } from '../data/site';
 
 /**
  * robots.txt as an endpoint rather than a static file, so the sitemap URL is
@@ -12,7 +13,7 @@ import { asset } from '../lib/url';
  * treat `crystal-kizor` as a file and drop it.
  */
 export const GET: APIRoute = ({ site }) => {
-  const raw = (site ?? new URL('https://crystalkizor.com/')).href;
+  const raw = (site ?? new URL(meta.site)).href;
   const origin = raw.endsWith('/') ? raw.slice(0, -1) : raw;
   const sitemap = `${origin}${asset('/sitemap-index.xml')}`;
 

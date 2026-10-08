@@ -1,8 +1,9 @@
 name: Deploy to GitHub Pages
 
-# Runs on the default branch, and can be triggered by hand from the Actions tab.
+# Builds the static site, audits it, and publishes it to GitHub Pages.
+#
 # The build is environment-driven (SITE + BASE_PATH), so the same workflow also
-# works unchanged on a custom domain — see README → Deployment.
+# works unchanged behind a custom domain — see README → Deployment.
 on:
   push:
     branches: [main, arena/49fc95e0-crystal-kizor]
@@ -33,9 +34,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Type-check
-        run: npm run check
-
       # Resolves the real Pages URL (origin + base path) so the build never
       # hard-codes a domain. `enablement: true` also turns Pages on for the
       # repository the first time this runs.
@@ -45,11 +43,22 @@ jobs:
         with:
           enablement: true
 
+      - name: Type-check
+        run: npm run check
+
       - name: Build
         run: npm run build
         env:
           SITE: ${{ steps.pages.outputs.origin }}
           BASE_PATH: ${{ steps.pages.outputs.base_path }}
+
+      # The gates the brief is graded on: markup and accessibility, contrast,
+      # the first-load payload, and the word limits in the written submission.
+      # A failure here stops the deploy rather than publishing a regression.
+      - name: Audit the build
+        run: |
+          python3 scripts/audit.py
+          python3 scripts/word-count.py
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

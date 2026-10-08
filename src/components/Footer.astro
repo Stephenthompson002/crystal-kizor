@@ -1,7 +1,7 @@
 ---
 import { meta, socials, initiatives } from '../data/site';
 import Icon from './Icon.astro';
-import Logo from './Logo.astro';
+import Wordmark from './Wordmark.astro';
 
 const year = new Date().getFullYear();
 
@@ -53,8 +53,8 @@ const iconFor = {
     <div
       class="grid gap-12 border-b border-sand/10 py-16 lg:grid-cols-[1.1fr_1fr] lg:gap-20 lg:py-20"
     >
-      <div class="flex flex-col items-start gap-7">
-        <Logo lockup="wordmark" tone="dark" />
+      <div class="flex flex-col items-start gap-6">
+        <Wordmark tone="dark" />
         <p class="max-w-[34ch] font-display text-h3 leading-[1.15] text-linen">
           Design for the climate you actually have.
         </p>

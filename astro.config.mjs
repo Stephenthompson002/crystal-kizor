@@ -12,8 +12,9 @@ import tailwindcss from '@tailwindcss/vite';
  *   SITE=https://crystalkizor.com            BASE_PATH=/            (root domain)
  *   SITE=https://user.github.io              BASE_PATH=/crystal-kizor (GitHub Pages)
  *
- * `site` drives canonical URLs, `sitemap-index.xml` and Open Graph tags, so a
- * wrong value here is silently bad for SEO rather than visibly broken.
+ * `site` drives canonical URLs, `sitemap-index.xml`, robots.txt and the Open
+ * Graph tags, so a wrong value here is silently bad for SEO rather than
+ * visibly broken.
  */
 export const SITE = process.env.SITE ?? 'https://crystalkizor.com';
 export const BASE_PATH = process.env.BASE_PATH ?? '/';
@@ -31,14 +32,7 @@ export default defineConfig({
   base: BASE_PATH,
   output: 'static',
   trailingSlash: 'ignore',
-  integrations: [
-    sitemap({
-      // With a subpath `base`, the integration emits both `/sub` and `/sub/`
-      // for the same document. Both serve fine, but a duplicated URL is noise
-      // in a sitemap, so keep the canonical trailing-slash form only.
-      filter: (page) => page !== `${SITE}${BASE_PATH === '/' ? '' : BASE_PATH}`,
-    }),
-  ],
+  integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],
     server: { allowedHosts: allowedDevHosts },

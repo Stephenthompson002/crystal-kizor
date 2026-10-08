@@ -2,7 +2,7 @@
 import { nav, meta } from '../data/site';
 import Button from './Button.astro';
 import Icon from './Icon.astro';
-import Logo from './Logo.astro';
+import Wordmark from './Wordmark.astro';
 
 const projectMailto = `mailto:${meta.email}?subject=Project%20enquiry%20%E2%80%94%20Studio%20COKA`;
 ---
@@ -15,7 +15,7 @@ const projectMailto = `mailto:${meta.email}?subject=Project%20enquiry%20%E2%80%9
   <div class="shell">
     <div class="flex h-16 items-center justify-between gap-6 md:h-18">
       <a href="#top" class="shrink-0 rounded-[2px]" aria-label="Crystal Kizor — back to top">
-        <Logo priority decorative />
+        <Wordmark />
       </a>
 
       <!-- Desktop navigation -->
@@ -75,7 +75,7 @@ const projectMailto = `mailto:${meta.email}?subject=Project%20enquiry%20%E2%80%9
     >
       <div class="shell">
         <div class="flex h-16 items-center justify-between">
-          <Logo />
+          <Wordmark />
           <button
             type="button"
             id="menu-close"

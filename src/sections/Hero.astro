@@ -3,7 +3,7 @@ import Button from '../components/Button.astro';
 import Figure from '../components/Figure.astro';
 import Icon from '../components/Icon.astro';
 import { meta } from '../data/site';
-import { media } from '../data/media';
+import portraitHero from '../assets/work/portrait-hero.webp';
 
 const projectMailto = `mailto:${meta.email}?subject=Project%20enquiry%20%E2%80%94%20Studio%20COKA`;
 
@@ -57,8 +57,6 @@ const layers = [
           <span>Designer</span>
           <span aria-hidden="true" class="text-ink-mute">·</span>
           <span>Founder, Studio COKA</span>
-          <span aria-hidden="true" class="text-ink-mute">·</span>
-          <span class="normal-case tracking-normal text-ink-soft/80">{meta.location}</span>
         </p>
 
         <h1 class="mt-7 text-h1 text-ink" data-reveal style="--reveal-delay:60ms">
@@ -78,11 +76,7 @@ const layers = [
           stay cool, use daylight, and hold up in the climate they stand in.
         </p>
 
-        <div
-          class="mt-9 flex flex-wrap items-center gap-3"
-          data-reveal
-          style="--reveal-delay:180ms"
-        >
+        <div class="mt-9 flex flex-wrap items-center gap-3" data-reveal style="--reveal-delay:180ms">
           <Button href={projectMailto} size="lg" icon="arrow-right" data-track="hero-start-project">
             Start a project
           </Button>
@@ -96,12 +90,12 @@ const layers = [
       <div class="lg:col-span-5" data-reveal style="--reveal-delay:160ms">
         <div class="relative">
           <Figure
-            src={media.portraitHero}
+            src={portraitHero}
+            width={1200}
+            height={1500}
+            alt="Crystal Kizor leaning on a stone-topped drawing table in her studio, with plans and material samples behind her and a city view through the window"
             ratio="4/5"
-            alt="Crystal Kizor in her studio, standing at a table of drawings and material samples"
-            label="Crystal Kizor, Studio COKA"
-            widths={[420, 700, 1024]}
-            sizes="(min-width: 1024px) 40vw, 100vw"
+            sizes="(min-width: 1024px) 42vw, 100vw"
             priority
             class="shadow-lift-lg"
           />
@@ -136,7 +130,7 @@ const layers = [
             <a
               href={layer.href}
               class="flex h-full flex-col gap-2.5 p-6 transition-colors duration-200 hover:bg-sand/70 lg:p-7"
-              data-track={`hero-layer-${layer.label.toLowerCase().replace(/\s+/g, "-")}`}
+              data-track={`hero-layer-${layer.label.toLowerCase().replace(/\s+/g, '-')}`}
             >
               <span class="eyebrow text-ink-mute">{layer.label}</span>
               <span class="flex items-center gap-2 font-display text-h4 leading-tight text-ink">

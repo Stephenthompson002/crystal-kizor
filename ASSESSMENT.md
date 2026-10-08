@@ -7,14 +7,14 @@ structure and deployment.
 
 ## 1. Thinking Note — for the client
 
-The brief is the primary source; public material was used only to make specifics accurate — Studio
-COKA's site, Reuters coverage of the Nsukka hospital, the TEDx listing, published awards. For thin-footprint
-ventures I claimed no more than the evidence supports.
+The brief is the primary source; public material only made specifics accurate — Studio COKA's site,
+Reuters on the Nsukka hospital, TEDx listings. Thin-footprint ventures are described with the
+confidence the evidence supports.
 
-The risk is not six ventures — it is six ventures reading as fragmentation. So the page is built on
-one spine: *the first design decision is the climate.* Studio COKA generates the knowledge, TEA
-gives it away, speaking distributes it, and the initiatives apply it to people rather than buildings.
-The page says that once, structurally.
+The risk is six ventures reading as fragmentation. So the page has one spine: *the first design
+decision is the climate.* Studio COKA makes the knowledge, TEA teaches it, speaking distributes it,
+and the initiatives apply it to people rather than buildings — said once, structurally, not repeated
+per brand.
 
 Three decisions shaped it:
 
@@ -22,11 +22,13 @@ Three decisions shaped it:
    making them scroll to find themselves costs enquiries.
 2. **Weight is expressed structurally, not stated.** Studio COKA gets the deepest treatment, the
    initiatives sit lower, and AKO Alliance — the biggest mission — gets the biggest card.
-3. **No stock photography.** Every image position is a marked drawing-sheet placeholder naming the
-   photograph it wants; a generic architecture photo would misrepresent the work, which a
-   credibility page cannot afford.
+3. **The supplied imagery carries the page.** Twenty-four frames were cropped and sized by a script,
+   so the framing decisions stay reviewable. One position remains a marked placeholder (no AKO
+   imagery was supplied) and the hospital is text-only: illustrating either with another building's
+   photograph misrepresents the work.
 
-Astro, Tailwind v4, subsetted fonts: zero framework JavaScript, no third-party requests, ~87 KB.
+Astro, Tailwind v4, subsetted fonts, no framework JavaScript, no third-party requests: 167 KB on
+first load.
 
 ---
 
@@ -48,7 +50,7 @@ orientation and glazing. Sixty seconds later: a one-page annotated report, every
 the TEA lesson that teaches it.
 
 **Technology.** A multimodal frontier model via API (GPT-4o-class or Claude), called with a JSON
-schema so findings are consistent and renderable rather than free text. The prompt carries Crystal's
+schema so findings stay consistent and renderable, not free text. The prompt carries Crystal's
 rubric as a versioned system prompt. Not a bespoke model — there is no training data, and the value
 is her judgment, not novel ML. Next.js on Vercel.
 
@@ -67,7 +69,7 @@ and route commercial projects to human review.
 
 ### What I would track
 
-**Outcome events first.** The page already labels 20 calls to action with `data-track`, so each of
+**Outcome events first.** The page already labels 21 calls to action with `data-track`, so each of
 the six audience paths has an explicit success event — `tea-waitlist`, `speaking-request`,
 `clients`, `contact-start-a-project`. Everything else is diagnostic.
 
@@ -101,7 +103,8 @@ I would work in this order, because it is the order of leverage:
    (`off-grid hospital`, `tropical architecture Nigeria`, `passive cooling design`). This is the
    cheapest qualified traffic available.
 4. **Core Web Vitals → engineering.** Any regression on a p75 mobile real-user metric is a bug, not a
-   tuning task. The performance budget is ~90 KB; enforce it in CI.
+   tuning task. The budget is ~200 KB gzipped for a first load including the hero image, checked by
+   `npm run audit`; enforce it in CI.
 5. **A/B the two highest-leverage variables** once there is volume: the hero sub-headline (the
    positioning sentence) and the router's card order. Both are one-line changes in `site.ts`, which
    is exactly why the content is centralised.
@@ -120,8 +123,7 @@ normal — so this is 10–30× low, meaning either the traffic is wrong or the 
 
 1. **Is the enquiry path technically working?** Test every CTA on a real mid-range Android and on
    desktop. `mailto:` links silently fail on many desktop configurations — the most common cause of
-   exactly this symptom, and invisible in analytics. Confirm the spam filter, deliverability and the
-   auto-reply. Check the console on the contact route.
+   exactly this symptom, and invisible in analytics. Confirm spam filtering and deliverability. Check the console on the contact route.
 2. **Is it the right traffic?** Segment by source, landing page and query. If a blog post or job ad
    pulls 4,000 of the 5,000, the headline ratio is misleading and the real rate is fine. Check
    country and device mix.
@@ -145,28 +147,45 @@ milestone.
 ships no runtime for content-led pages, which is exactly what this is; Tailwind v4 keeps the palette,
 type scale and rhythm as CSS custom properties declared once in `@theme`, so the design system is
 auditable in one file. There is no interactivity here that justifies React, so none is shipped —
-which is why total first load is ~87 KB across 6 requests.
+which is why first load is ~167 KB gzipped across 7 requests, 75 KB of it the hero photograph.
 
 Detail in `README.md`: stack rationale, full file structure, IA table, visual system, accessibility,
 performance measurements, measurement plan, and deployment instructions for Vercel, Netlify, Cloudflare
 Pages and plain static hosting.
 
+### Brand and imagery
+
+The identity in the supplied logo collection was taken as given. Its CK monogram and script signature
+were vectorised to two small SVGs, used as CSS masks so one file serves the light header and the dark
+footer; the name itself stays set in type rather than drawn, so it remains selectable and searchable.
+The favicon and the social card are generated from the same traced monogram by
+`scripts/build-brand-assets.py`, which means they cannot drift from the identity.
+
+Photography came from the provided folders and is processed by `scripts/build-images.mjs`: fixed aspect
+crops, a per-file size budget, and alt text written from the frame itself. Project attribution follows
+the folder an image came from. Nature Home 2, Nature Home and the Community Centre are illustrated;
+the hospital is not, and AKO Alliance keeps a clearly marked placeholder.
+
 ### Source
 
 Full source is in this repository. Entry point: `src/pages/index.astro`, which composes nine
-sections. All copy, links, projects, stats and credentials are in `src/data/site.ts` — the page can
-be re-edited without touching a component.
+sections. All copy, links, stats, credentials and projects are in `src/data/` — the page can be
+re-edited without touching a component. Imagery is processed by a committed script rather than by
+hand, and `npm run audit` re-checks markup, contrast and the first-load payload against every build.
 
 ### Deployment
 
 ```bash
 npm install
 npm run build        # → dist/, fully static
+npm run verify       # types + build + audit + word counts
 ```
 
-`vercel` or `vercel --prod` deploys with zero configuration (also Netlify / Cloudflare Pages /
-`rsync`). Before launch: set the real domain in `astro.config.mjs`, swap `meta.email` in
-`src/data/site.ts`, confirm the YouTube handle, and drop in the photography.
+The repository includes a GitHub Actions workflow that type-checks, builds, audits and publishes to
+GitHub Pages on every push — that is the live link. `SITE` and `BASE_PATH` come from the environment,
+so the same build also works at a domain root (`vercel`, Netlify, Cloudflare Pages or plain
+`rsync`). Before launch: set the real domain, swap `meta.email` in `src/data/site.ts`, and confirm the
+YouTube channel URL.
 
 ### Design decisions summary
 

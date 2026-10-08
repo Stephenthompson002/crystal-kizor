@@ -3,7 +3,7 @@ import Button from '../components/Button.astro';
 import Figure from '../components/Figure.astro';
 import Icon from '../components/Icon.astro';
 import { coka, meta } from '../data/site';
-import { media } from '../data/media';
+import studioModel from '../assets/work/studio-model.webp';
 
 const projectMailto = `mailto:${meta.email}?subject=Project%20enquiry%20%E2%80%94%20Studio%20COKA`;
 ---
@@ -55,11 +55,11 @@ const projectMailto = `mailto:${meta.email}?subject=Project%20enquiry%20%E2%80%9
            columns end flush rather than leaving a gap. -->
       <div class="lg:col-span-5">
         <Figure
-          src={media.studioAtrium}
+          src={studioModel}
+          width={1200}
+          height={1600}
+          alt="A Studio COKA working drawing beside a physical massing model on a desk"
           ratio="4/5"
-          alt="Clerestory daylight falling through a timber ceiling above the studio stair"
-          label="Studio COKA — clerestory daylight over the stair"
-          widths={[420, 700, 1200]}
           sizes="(min-width: 1024px) 40vw, 100vw"
           class="h-full shadow-lift"
           innerClass="lg:aspect-auto lg:h-full"

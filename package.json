@@ -5,25 +5,27 @@
   "private": true,
   "description": "Single-page landing site for Crystal Kizor and the Studio COKA ecosystem.",
   "scripts": {
-    "astro": "astro",
-    "build": "astro build",
-    "check": "astro check",
     "dev": "astro dev --host 0.0.0.0",
+    "build": "astro build",
+    "preview": "astro preview --host 0.0.0.0",
+    "check": "astro check",
+    "astro": "astro",
     "fonts": "python3 scripts/subset-fonts.py",
-    "og": "python3 scripts/build-og.py",
-    "preview": "astro preview --host 0.0.0.0"
+    "images": "node scripts/build-images.mjs",
+    "marks": "node scripts/extract-marks.mjs && python3 scripts/trace-marks.py",
+    "brand": "python3 scripts/build-brand-assets.py",
+    "audit": "python3 scripts/audit.py --glyphs",
+    "words": "python3 scripts/word-count.py",
+    "verify": "npm run check && npm run build && npm run audit && npm run words"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.3.6",
-    "sharp": "^0.35.5",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "@fontsource-variable/fraunces": "^5.3.0",
-    "@fontsource-variable/instrument-sans": "^5.3.0",
     "typescript": "^6.0.3"
   }
 }
