@@ -260,6 +260,20 @@ export const initiatives = [
   },
 ] as const;
 
+/**
+ * What AKO Alliance actually does, in the order the NGO states it.
+ *
+ * These are restatements of the supplied brief and the existing card copy, not
+ * new claims. They sit on the card where a marked image placeholder used to be:
+ * no AKO photography was supplied, and information serves the visitor better
+ * than a gap with a note on it.
+ */
+export const akoPillars = [
+  'Return out-of-school children to the classroom.',
+  'Support families with capital to start and grow a business.',
+  'Sponsor the ideas that move a community forward.',
+] as const;
+
 /* -------------------------------------------------------------------------- */
 /* Credentials                                                                  */
 /* -------------------------------------------------------------------------- */

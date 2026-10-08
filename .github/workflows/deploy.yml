@@ -1,12 +1,18 @@
-name: Deploy to GitHub Pages
+name: Verify and deploy
 
-# Builds the static site, audits it, and publishes it to GitHub Pages.
+# Two jobs on purpose.
 #
-# The build is environment-driven (SITE + BASE_PATH), so the same workflow also
-# works unchanged behind a custom domain — see README → Deployment.
+#   verify — type-check, build and audit. Runs on every push and has no
+#            dependency on hosting, so the quality gate is enforced even in a
+#            repository where Pages has not been switched on yet.
+#   deploy — publishes dist/ to GitHub Pages.
+#
+# Both the origin and the base path come from the environment, so the same
+# workflow also works unchanged behind a custom domain — see README → Deployment.
+
 on:
   push:
-    branches: [main, arena/49fc95e0-crystal-kizor, arena/d9889fde-crystal-kizor]
+    branches: [main, arena/49fc95e0-crystal-kizor]
   workflow_dispatch:
 
 permissions:
@@ -21,7 +27,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  # The gates the brief is graded on: markup and accessibility, contrast, the
+  # first-load payload, and the word limits in the written submission. A failure
+  # here stops the deploy rather than publishing a regression.
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,45 +43,63 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Resolves the real Pages URL (origin + base path) so the build never
-      # hard-codes a domain. Pages must be switched on once in the repository
-      # settings (Settings → Pages → Source: GitHub Actions). `enablement` is
-      # deliberately not used: creating the site needs admin rights that the
-      # workflow token does not have, which failed every run with
-      # "Resource not accessible by integration".
-      - name: Configure Pages
-        id: pages
-        uses: actions/configure-pages@v5
-
       - name: Type-check
         run: npm run check
 
       - name: Build
         run: npm run build
-        env:
-          SITE: ${{ steps.pages.outputs.origin }}
-          BASE_PATH: ${{ steps.pages.outputs.base_path }}
 
-      # The gates the brief is graded on: markup and accessibility, contrast,
-      # the first-load payload, and the word limits in the written submission.
-      # A failure here stops the deploy rather than publishing a regression.
       - name: Audit the build
         run: |
           python3 scripts/audit.py
           python3 scripts/word-count.py
+
+  deploy:
+    needs: verify
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Resolves the real Pages URL (origin + base path) so the build never
+      # hard-codes a domain.
+      #
+      # `enablement: true` is deliberately NOT used. Creating the Pages site
+      # needs repository administration the workflow token does not have, and
+      # asking for it failed every single run with "Resource not accessible by
+      # integration" — which, because the audits sat behind it in the same job,
+      # meant the quality gate never ran at all. Without it this step only
+      # *reads* the Pages configuration.
+      #
+      # A repository with Pages switched off (Settings → Pages → Source:
+      # GitHub Actions) will still see this step warn and the publish steps
+      # below fail. That is confined to this job on purpose: `verify` above is
+      # independent of hosting and reports either way.
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build for Pages
+        run: npm run build
+        env:
+          SITE: ${{ steps.pages.outputs.origin }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4

@@ -9,6 +9,24 @@ the climate**, and every venture is an expression of it.
 
 ---
 
+## The written submission
+
+**[`ASSESSMENT.md`](ASSESSMENT.md) is the written half of the deliverable**, in the order the brief
+sets out: Part 1 (the landing page), Part 2 (AI product thinking), Part 3 (analytics and
+improvement), then the submission note. The three word limits are not maintained by hand —
+`scripts/word-count.py` reads the file and fails the build if any of them is exceeded, so the counts
+cannot drift as the content changes:
+
+| Section | Limit | Current |
+| --- | --- | --- |
+| Part 2 — AI product thinking | 300 | 296 |
+| Part 3 — analytics and improvement (measurement *and* the 5,000-visitor scenario share one budget) | 250 | 247 |
+| Submission note — thinking, key decisions, technology | 200 | 198 |
+
+`npm run words` runs the check on its own; `npm run verify` includes it.
+
+---
+
 ## Quick start
 
 ```bash
@@ -80,10 +98,10 @@ crystal-kizor/
     │   ├── robots.txt.ts       # robots.txt derived from `site` + `base`
     │   └── site.webmanifest.ts # the manifest, with base-aware icons and scope
     ├── components/
+    │   ├── BeforeAfter.astro   # drag-to-compare slider, native range + no-JS fallback
     │   ├── BrandMark.astro     # the traced marks as a currentColor CSS mask
     │   ├── Button.astro        # 4 variants × 3 sizes, renders <a> or <button>
-    │   ├── Figure.astro        # responsive image, or a clearly marked placeholder
-    │   ├── BeforeAfter.astro   # drag-to-compare slider: native range input + vanilla JS, no-JS fallback
+    │   ├── Figure.astro        # responsive image, or a drawing-sheet plate
     │   ├── Footer.astro        # 4 link columns + contact band + socials
     │   ├── Header.astro        # sticky header + accessible mobile panel
     │   ├── Icon.astro          # inline SVG set
@@ -192,7 +210,7 @@ Twenty-four photographs, all from the folders supplied with the brief, processed
 | --- | --- |
 | Hero | The studio portrait, 4:5, the only eager image on the page. |
 | Studio COKA | A working drawing beside a physical massing model. |
-| Work | The hospital's before-and-after pair (a drag-to-compare slider), Nature Home 2, Nature Home and the Community Centre — a lead frame and a five-frame gallery each. |
+| Work | Nature Home 2, Nature Home and the Community Centre — a lead frame and a five-frame gallery each. |
 | About | A portrait at the drawing board, with plans pinned to the wall behind. |
 | Knowledge | The podcast desk (TEA) and the standing studio portrait (Speaking). |
 | Contact | The editorial portrait, closing the page. |
@@ -208,8 +226,27 @@ node scripts/build-images.mjs
 ```
 
 **Attribution is by folder.** An image is only shown against the project whose folder it came from.
-The hospital — the flagship — is shown as a **before-and-after pair of the same building**: the existing residential structure and the renovated hospital. Those frames come from the practice's own project record and are attributed to Studio COKA. The slider's frames are wired in `src/data/projects.ts` (`beforeAfter`). Until the two photographs are added, each side shows a labelled placeholder naming the photograph it needs, rather than an image borrowed from another project. It also states plainly that clinical privacy governs its imagery. AKO Alliance keeps a **marked
-placeholder** naming the photograph it wants, and no image is borrowed from the practice to fill it.
+The hospital — the flagship — is a written case study: illustrating it with another building would be
+a straightforward misrepresentation, and the copy states plainly that clinical privacy governs its
+imagery.
+
+**Before and after, for the flagship.** `BeforeAfter.astro` is a drag-to-compare slider over two
+frames of the same building — the existing residential structure and the hospital it became. It is
+built the classic way rather than reinvented, in three layers:
+
+1. **No JavaScript** — both frames render, the tags and the handle are hidden, and the pair reads as
+   a static side-by-side.
+2. **A real form control** — a native `<input type="range">` drives a `--split` custom property that
+   clips the before frame. Keyboard, screen readers and touch all work through the control itself,
+   not through a hand-rolled ARIA widget.
+3. **Pointer drag** — dragging anywhere on the photograph moves the divider, with `touch-action:
+   pan-y` so vertical scrolling on a phone is not hijacked.
+
+**No AKO Alliance photography was supplied either, and the card no longer fakes a gap.** It used to
+carry a marked placeholder; it now carries the three strands of the work — return out-of-school
+children to the classroom, capital for family businesses, sponsorship for ideas that move a
+community — as a numbered list. Information in the space an image would take is worth more to a
+visitor than a note saying the photograph is missing, and nothing is borrowed to fill it.
 
 Alt text describes each frame as it actually is (checked frame by frame against the file), and where
 a supplied image is a design visualisation rather than a photograph of built work, the copy does not
@@ -229,8 +266,8 @@ it on every run.
 - Skip link, visible focus ring, focus ring colour switches on dark grounds.
 - Mobile menu is a proper dialog: `aria-expanded`, focus moved in, focus trapped, Escape closes,
   focus returned to the trigger, background scroll locked.
-- All decorative SVG is `aria-hidden`; the one remaining placeholder exposes `role="img"` with a
-  descriptive label.
+- All decorative SVG is `aria-hidden`; the two unsupplied frames in the comparison expose
+  `role="img"` with a descriptive label.
 - Every image carries intrinsic dimensions, so nothing shifts while it loads.
 - Full `prefers-reduced-motion` support; the page works with JavaScript disabled.
 - An accessibility statement is on the page itself (`#accessibility`), with a contact route.
@@ -243,14 +280,14 @@ Measured on the production build by `scripts/audit.py` (gzipped transfer):
 
 | Asset | Gzipped |
 | --- | --- |
-| `index.html` | 19.1 KB |
-| CSS | 8.1 KB |
+| `index.html` | 20.4 KB |
+| CSS | 8.4 KB |
 | JavaScript | 1.1 KB |
 | Fraunces (subsetted, `opsz` axis) | 31.9 KB |
 | Instrument Sans (subsetted, `wght` axis) | 27.6 KB |
-| `favicon.svg` | 4.2 KB |
+| `favicon.svg` | 3.2 KB |
 | Hero photograph (the 800 px candidate a 1440 px screen picks) | 75.4 KB |
-| **First load total** | **≈ 168 KB in 7 requests** |
+| **First load total** | **168.0 KB in 7 requests** |
 
 What gets it there:
 
@@ -315,14 +352,23 @@ SITE=https://<user>.github.io BASE_PATH=/crystal-kizor npm run build
 
 ### GitHub Pages (included)
 
-`.github/workflows/deploy.yml` type-checks, builds and publishes to Pages on every push, resolving
-the real Pages URL for `SITE`/`BASE_PATH` automatically; the same workflow works unchanged behind a
-custom domain. The live page for this submission is deployed on Netlify —
-**https://crystal-kizor.netlify.app/** — from the same `dist/` build.
+`.github/workflows/deploy.yml` runs on every push and is split into two jobs on purpose:
 
-One-time setup: in the repository, go to **Settings → Pages → Build and deployment → Source** and choose
-**GitHub Actions**. The workflow deliberately does not try to create the Pages site itself (it needs admin
-rights the workflow token lacks), so the first run fails until this is switched on.
+- **`verify`** — type-check, build, audit, word counts. It has no dependency on hosting at all, so
+  the quality gate is enforced even in a repository where Pages has not been switched on.
+- **`deploy`** — resolves the real Pages URL into `SITE`/`BASE_PATH`, rebuilds, and publishes. It
+  `needs: verify`, so a regression cannot ship.
+
+That split matters here. The first runs failed at `actions/configure-pages`, and because the gate sat
+*behind* it in the same job, **the audits never executed at all** — the quality gate the brief is
+graded on was silently not running. `configure-pages` also no longer asks for `enablement`, because
+creating the Pages site needs repository administration the workflow token does not have: that
+request returned `Resource not accessible by integration` on every run. The step now only *reads*
+the Pages configuration.
+
+**One manual step is required the first time:** *Settings → Pages → Source: **GitHub Actions***. It
+cannot be done from CI. After that single change the `deploy` job publishes and the workflow is
+self-sufficient.
 
 ### Vercel
 
@@ -353,7 +399,10 @@ rsync -avz dist/ user@host:/var/www/crystalkizor.com/
    `hello@crystalkizor.com` as a placeholder, and every contact link derives from it).
 3. Confirm the YouTube channel URL in `socials` (currently a search, because the handle is not
    published on her profiles).
-4. Replace the AKO Alliance placeholder with a real photograph when one exists.
+4. Supply the two frames for the flagship comparison — drop them into `assets-src/`, add them to
+   the `before`/`after` entries in `src/data/projects.ts`, and the caption switches from drawing
+   plates to photographs automatically. AKO Alliance photography would likewise replace its
+   three-strand list.
 5. Add the analytics provider (see *Measurement*).
 6. Submit `sitemap-index.xml` in Search Console.
 
@@ -379,7 +428,7 @@ npm run marks     # src/assets/brand — extract + trace the supplied logo sheet
 npm run brand     # public/favicon.svg, public/og.png, public/brand/
 npm run audit     # markup, contrast, first-load payload, against dist/
                   #   (add the fontTools venv to also check glyph coverage)
-npm run words     # checks ASSESSMENT.md against the brief's 200/300/250 limits
+npm run words     # checks ASSESSMENT.md against the brief's 300/250/200 limits
 ```
 
 `assets-src/` holds the untouched client-supplied downloads and is deliberately **not** committed —

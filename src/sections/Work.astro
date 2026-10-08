@@ -10,6 +10,14 @@ import { projects, alsoInPortfolio } from '../data/projects';
 const projectMailto = `mailto:${meta.email}?subject=Project%20enquiry%20%E2%80%94%20Studio%20COKA`;
 const flagship = projects.find((p) => p.id === 'tesh')!;
 const withImages = projects.filter((p) => p.id !== 'tesh' && p.image);
+
+/**
+ * True only once both halves of the flagship comparison have a real photograph.
+ * The caption reads from this rather than asserting that photographs exist.
+ */
+const comparisonIsComplete = Boolean(
+  flagship.beforeAfter?.before.image && flagship.beforeAfter?.after.image,
+);
 ---
 
 <section id="work" aria-labelledby="work-title" class="section-y bg-linen">
@@ -86,7 +94,8 @@ const withImages = projects.filter((p) => p.id !== 'tesh' && p.image);
       </div>
     </article>
 
-    <!-- Before and after: the same building, before the renovation and after it. -->
+    <!-- Before and after: the same building, before the renovation and after it.
+         The caption only claims photographs once both frames are supplied. -->
     {
       flagship.beforeAfter && (
         <div class="mt-16 grid gap-8 lg:grid-cols-12 lg:gap-x-16" data-reveal>
@@ -97,8 +106,9 @@ const withImages = projects.filter((p) => p.id !== 'tesh' && p.image);
             </p>
             <h3 class="text-h3 text-ink">The same building, transformed.</h3>
             <p class="text-micro leading-relaxed text-ink-mute">
-              Drag the handle to compare the existing residential building with the hospital it
-              became. Photographs by Studio COKA.
+              {comparisonIsComplete
+                ? 'Drag the handle to compare the existing residential building with the hospital it became. Photographs by Studio COKA.'
+                : 'Drag the handle to compare the existing residential building with the hospital it became. The two frames are drawing plates for now — the practice has not released before-and-after photography of this building, and nothing from another project stands in for it.'}
             </p>
           </div>
           <div class="lg:col-span-8">
