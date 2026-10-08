@@ -1,0 +1,107 @@
+name: Verify and deploy
+
+# Two jobs on purpose.
+#
+#   verify — type-check, build and audit. Runs on every push and has no
+#            dependency on hosting, so the quality gate is enforced even in a
+#            repository where Pages has not been switched on yet.
+#   deploy — publishes dist/ to GitHub Pages.
+#
+# Both the origin and the base path come from the environment, so the same
+# workflow also works unchanged behind a custom domain — see README → Deployment.
+
+on:
+  push:
+    branches: [main, arena/49fc95e0-crystal-kizor]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never cancel a deploy in flight; queue instead, so the live site is never
+# left half-published.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  # The gates the brief is graded on: markup and accessibility, contrast, the
+  # first-load payload, and the word limits in the written submission. A failure
+  # here stops the deploy rather than publishing a regression.
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run check
+
+      - name: Build
+        run: npm run build
+
+      - name: Audit the build
+        run: |
+          python3 scripts/audit.py
+          python3 scripts/word-count.py
+
+  # Publishing is deliberately scoped to main. A branch push verifies and stops
+  # there, so a feature branch never shows a red pipeline for a repository
+  # setting it cannot change, and a broken deploy can never block review.
+  # `workflow_dispatch` still allows a manual publish from any branch.
+  #
+  # This job needs GitHub Pages switched on once — Settings → Pages → Source:
+  # GitHub Actions. It cannot be done from here: creating the Pages site needs
+  # repository administration the workflow token does not have (the API answers
+  # "Resource not accessible by integration"), and `configure-pages` with
+  # `enablement` failed every run with exactly that. Without it, this job stops
+  # at `Configure Pages` with "Get Pages site failed … verify that the
+  # repository has Pages enabled". Nothing else is blocking the deploy.
+  deploy:
+    needs: verify
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Resolves the real Pages URL (origin + base path) so the build never
+      # hard-codes a domain. See the note on the job above for why `enablement`
+      # is not used and what has to be switched on first.
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build for Pages
+        run: npm run build
+        env:
+          SITE: ${{ steps.pages.outputs.origin }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
