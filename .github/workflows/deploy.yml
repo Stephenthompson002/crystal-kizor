@@ -74,17 +74,20 @@ jobs:
       # Resolves the real Pages URL (origin + base path) so the build never
       # hard-codes a domain.
       #
-      # `enablement: true` asks Pages to create the site if it does not exist
-      # yet. Where the repository or organisation restricts that, this step is
-      # the one that fails, and the fix is a one-time setting in
-      # Settings → Pages → Source: GitHub Actions — after which the step is a
-      # no-op. It is deliberately isolated here so that it cannot mask the
-      # results of the `verify` job above.
+      # `enablement: true` is deliberately NOT used. Creating the Pages site
+      # needs repository administration the workflow token does not have, and
+      # asking for it failed every single run with "Resource not accessible by
+      # integration" — which, because the audits sat behind it in the same job,
+      # meant the quality gate never ran at all. Without it this step only
+      # *reads* the Pages configuration.
+      #
+      # A repository with Pages switched off (Settings → Pages → Source:
+      # GitHub Actions) will still see this step warn and the publish steps
+      # below fail. That is confined to this job on purpose: `verify` above is
+      # independent of hosting and reports either way.
       - name: Configure Pages
         id: pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Build for Pages
         run: npm run build

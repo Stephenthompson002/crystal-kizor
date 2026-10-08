@@ -86,6 +86,14 @@ const ratioMap: Record<string, string> = {
 const aspect = ratioMap[ratio] ?? 'aspect-[4/3]';
 
 const isDark = tone === 'dark';
+
+/**
+ * The accessible name already opens with "Image placeholder", so a `label` that
+ * repeats the word would be read aloud as "Image placeholder — Placeholder —
+ * …". The prefix is stripped rather than trusted to every call site.
+ */
+const requested = label ?? alt ?? 'photograph to be supplied';
+const placeholderLabel = requested.replace(/^Placeholder\s*[\u2014\u2013-]\s*/i, '');
 ---
 
 <figure class={`relative overflow-hidden rounded-[2px] ${className}`}>
@@ -115,7 +123,7 @@ const isDark = tone === 'dark';
           'blueprint',
         ].join(' ')}
         role="img"
-        aria-label={`Image placeholder — ${label ?? alt ?? 'photograph to be supplied'}`}
+        aria-label={`Image placeholder — ${placeholderLabel}`}
       >
         {/* Corner registration ticks — reads as a drawing sheet, not a broken image */}
         <span

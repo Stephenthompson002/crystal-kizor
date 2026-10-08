@@ -73,11 +73,27 @@ source, output name, aspect ratio and gravity, so re-running it reproduces the w
 byte and the framing stays reviewable.
 
 **Attribution is by folder.** An image is only shown against the project whose folder it came from.
-The hospital — the flagship — is a written case study with no photograph, because none was supplied:
+The hospital — the flagship — is a written case study, because no photograph of it was supplied:
 illustrating it with another building would be a straightforward misrepresentation, and the copy says
-plainly that clinical privacy governs its imagery. AKO Alliance keeps a **marked placeholder** naming
-the photograph it wants, and no image is borrowed from the practice to fill it. Where a supplied
-image is a visualisation rather than a photograph of built work, the copy does not claim otherwise.
+plainly that clinical privacy governs its imagery. Where a supplied image is a visualisation rather
+than a photograph of built work, the copy does not claim otherwise.
+
+**The flagship carries a before-and-after comparison.** The hospital began as an existing residential
+structure that was retained and rebuilt around daylight and natural ventilation, which is exactly the
+kind of change a picture shows better than a paragraph. `BeforeAfter.astro` is a drag-to-compare
+slider over two frames of the same building, built the classic way rather than reinvented, in three
+layers: with no JavaScript both frames render as a static pair and the controls hide; a **native
+`<input type="range">`** drives a `--split` custom property that clips the before frame, so keyboard
+and screen readers work through a real form control rather than a hand-rolled ARIA widget; and
+pointer drag moves the divider anywhere on the image, with `touch-action: pan-y` so vertical
+scrolling on a phone is not hijacked. Neither frame was supplied by the practice, so both render as
+labelled drawing plates and the caption reads from whether the images exist rather than asserting
+that photographs do.
+
+**Nothing on the page invents an asset to look finished.** AKO Alliance used to carry a marked
+placeholder; it now carries the three strands of the work as a numbered list. Information in the
+space an image would take is worth more to a visitor than a note saying the photograph is missing,
+and no photograph is borrowed from the practice to fill either gap.
 
 ### Build and quality gates
 
@@ -90,9 +106,9 @@ handshake to a CDN.
 builds, then audits the real output: markup and accessibility, every contrast pair the design ships,
 glyph coverage, and the first-load payload against an enforced budget. Current state:
 
-- **166.5 KB gzipped across 7 requests**, 0 third-party. Budget is 400 KB / 8 requests; the audit
+- **168.0 KB gzipped across 7 requests**, 0 third-party. Budget is 400 KB / 8 requests; the audit
   fails the build above either.
-- One `<h1>`, no heading skips across 34 headings, one `<main>`, skip link, focus-trapped mobile
+- One `<h1>`, no heading skips across 35 headings, one `<main>`, skip link, focus-trapped mobile
   dialog, every image with intrinsic dimensions and alt text, 10/10 external links with `rel=noopener`.
 - All 12 contrast pairs pass WCAG 2.2 AA, and they are the values the design actually ships — nothing
   is opacity-based.
@@ -175,10 +191,10 @@ it to people rather than buildings.
 share one URL. Weight is expressed **structurally, not stated**. Contact is **email-first**, four
 paths each opening a pre-filled draft with the right subject. Supplied assets are the **source of
 truth**: the logo sheet is traced rather than redrawn, crops are declared in a script rather than by
-hand, and where the brief promises an asset the folder lacks, the page shows a marked placeholder
-instead of inventing one.
+hand, and where the brief promises an asset the folder lacks, the page says so rather than inventing
+one.
 
 **Technology.** Astro 7 with Tailwind v4, static output, zero framework JavaScript — the only script
 is 1.1 KB of progressive enhancement. Fonts are self-hosted and subsetted to the 79 characters used,
-with zero third-party requests. First load is 166.5 KB across 7 requests, and one `npm run verify`
+with zero third-party requests. First load is 168.0 KB across 7 requests, and one `npm run verify`
 gates the type check, build, audit and these word limits, so a regression cannot publish.

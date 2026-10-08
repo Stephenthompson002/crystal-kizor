@@ -1,7 +1,6 @@
 ---
-import Figure from '../components/Figure.astro';
 import Icon from '../components/Icon.astro';
-import { initiatives, meta } from '../data/site';
+import { akoPillars, initiatives, meta } from '../data/site';
 
 const byId = Object.fromEntries(initiatives.map((i) => [i.id, i]));
 const elevate = byId['elevated'];
@@ -51,14 +50,20 @@ const arrow =
           <p class="text-body leading-relaxed text-ink-soft">{ako.body}</p>
         </div>
 
-        {/* No AKO Alliance imagery was supplied. Rather than borrow a
-            photograph from the practice, the gap is marked and named. */}
-        <Figure
-          fig="01"
-          ratio="16/9"
-          icon="book"
-          label="Placeholder — AKO Alliance classroom imagery to be supplied"
-        />
+        {/* No AKO Alliance photography was supplied, and nothing is borrowed
+            from the practice to stand in for it. The card carries the three
+            strands of the work instead — information in the space an image
+            would have taken, rather than a marked gap. */}
+        <ol class="flex flex-col divide-y divide-sand-deep border-y border-sand-deep" role="list">
+          {akoPillars.map((pillar, index) => (
+            <li class="flex items-baseline gap-4 py-4">
+              <span aria-hidden="true" class="eyebrow shrink-0 text-clay">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <span class="text-small leading-relaxed text-ink-soft">{pillar}</span>
+            </li>
+          ))}
+        </ol>
 
         <p class="text-small leading-relaxed text-ink-soft">
           Opportunity is the bedrock of the drive: children, families and young adults given a

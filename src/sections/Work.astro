@@ -1,4 +1,5 @@
 ---
+import BeforeAfter from '../components/BeforeAfter.astro';
 import Button from '../components/Button.astro';
 import Figure from '../components/Figure.astro';
 import Icon from '../components/Icon.astro';
@@ -9,6 +10,14 @@ import { projects, alsoInPortfolio } from '../data/projects';
 const projectMailto = `mailto:${meta.email}?subject=Project%20enquiry%20%E2%80%94%20Studio%20COKA`;
 const flagship = projects.find((p) => p.id === 'tesh')!;
 const withImages = projects.filter((p) => p.id !== 'tesh' && p.image);
+
+/**
+ * True only once both halves of the flagship comparison have a real photograph.
+ * The caption reads from this rather than asserting that photographs exist.
+ */
+const comparisonIsComplete = Boolean(
+  flagship.beforeAfter?.before.image && flagship.beforeAfter?.after.image,
+);
 ---
 
 <section id="work" aria-labelledby="work-title" class="section-y bg-linen">
@@ -84,6 +93,35 @@ const withImages = projects.filter((p) => p.id !== 'tesh' && p.image);
         </div>
       </div>
     </article>
+
+    <!-- Before and after: the same building, before the renovation and after it.
+         The caption only claims photographs once both frames are supplied. -->
+    {
+      flagship.beforeAfter && (
+        <div class="mt-16 grid gap-8 lg:grid-cols-12 lg:gap-x-16" data-reveal>
+          <div class="flex flex-col gap-4 lg:col-span-4 lg:pt-2">
+            <p class="eyebrow flex items-center gap-2.5 text-clay">
+              <span aria-hidden="true" class="inline-block h-px w-6 bg-clay/50"></span>
+              Before and after
+            </p>
+            <h3 class="text-h3 text-ink">The same building, transformed.</h3>
+            <p class="text-micro leading-relaxed text-ink-mute">
+              {comparisonIsComplete
+                ? 'Drag the handle to compare the existing residential building with the hospital it became. Photographs by Studio COKA.'
+                : 'Drag the handle to compare the existing residential building with the hospital it became. The two frames are drawing plates for now — the practice has not released before-and-after photography of this building, and nothing from another project stands in for it.'}
+            </p>
+          </div>
+          <div class="lg:col-span-8">
+            <BeforeAfter
+              id="tesh-before-after"
+              before={flagship.beforeAfter.before}
+              after={flagship.beforeAfter.after}
+              ratio="16/10"
+            />
+          </div>
+        </div>
+      )
+    }
 
     <!-- The built work, with the supplied photography -->
     <div class="mt-20 flex flex-col gap-20 lg:gap-24">
