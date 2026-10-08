@@ -7,13 +7,13 @@ structure and deployment.
 
 ## 1. Thinking Note — for the client
 
-The brief is the primary source; public material only made specifics accurate — Studio COKA's site,
+The brief is the primary source; public material made specifics accurate: Studio COKA's site,
 Reuters on the Nsukka hospital, TEDx listings. Thin-footprint ventures are described with the
 confidence the evidence supports.
 
-The risk is six ventures reading as fragmentation. So the page has one spine: *the first design
+The risk is six ventures reading as fragmentation. The page has one spine: *the first design
 decision is the climate.* Studio COKA makes the knowledge, TEA teaches it, speaking distributes it,
-and the initiatives apply it to people rather than buildings — said once, structurally, not repeated
+and the initiatives apply it to people rather than buildings: said once, structurally, not repeated
 per brand.
 
 Three decisions shaped it:
@@ -21,13 +21,13 @@ Three decisions shaped it:
 1. **The audience router sits third, above the flagship project.** Six visitor types share one URL;
    making them scroll to find themselves costs enquiries.
 2. **Weight is expressed structurally, not stated.** Studio COKA gets the deepest treatment, the
-   initiatives sit lower, and AKO Alliance — the biggest mission — gets the biggest card.
+   initiatives sit lower, and AKO Alliance, the biggest mission, gets the biggest card.
 3. **The supplied imagery carries the page.** Twenty-four frames were cropped and sized by a script,
    so the framing decisions stay reviewable. One position remains a marked placeholder (no AKO
    imagery was supplied) and the hospital is text-only: illustrating either with another building's
    photograph misrepresents the work.
 
-Astro, Tailwind v4, subsetted fonts, no framework JavaScript, no third-party requests: 167 KB on
+Astro, Tailwind v4, subsetted fonts, no framework JavaScript, no third-party requests: 168 KB on
 first load.
 
 ---
@@ -147,7 +147,7 @@ milestone.
 ships no runtime for content-led pages, which is exactly what this is; Tailwind v4 keeps the palette,
 type scale and rhythm as CSS custom properties declared once in `@theme`, so the design system is
 auditable in one file. There is no interactivity here that justifies React, so none is shipped —
-which is why first load is ~167 KB gzipped across 7 requests, 75 KB of it the hero photograph.
+which is why first load is ~168 KB gzipped across 7 requests, 75 KB of it the hero photograph.
 
 Detail in `README.md`: stack rationale, full file structure, IA table, visual system, accessibility,
 performance measurements, measurement plan, and deployment instructions for Vercel, Netlify, Cloudflare
@@ -181,11 +181,12 @@ npm run build        # → dist/, fully static
 npm run verify       # types + build + audit + word counts
 ```
 
-The repository includes a GitHub Actions workflow that type-checks, builds, audits and publishes to
-GitHub Pages on every push — that is the live link. `SITE` and `BASE_PATH` come from the environment,
-so the same build also works at a domain root (`vercel`, Netlify, Cloudflare Pages or plain
-`rsync`). Before launch: set the real domain, swap `meta.email` in `src/data/site.ts`, and confirm the
-YouTube channel URL.
+The live page is deployed at **https://crystal-kizor.netlify.app/**. The repository also includes a
+GitHub Actions workflow that type-checks, builds, audits and publishes to GitHub Pages on every push
+(one-time setup in Settings → Pages). `SITE` and `BASE_PATH` come from the environment, so the same
+build serves a domain root or a project subpath from Netlify, Vercel, Cloudflare Pages or plain
+`rsync` with no source change. Before launch: set the real domain, swap `meta.email` in
+`src/data/site.ts`, and confirm the YouTube channel URL.
 
 ### Design decisions summary
 

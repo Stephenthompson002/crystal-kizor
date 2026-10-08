@@ -250,7 +250,7 @@ Measured on the production build by `scripts/audit.py` (gzipped transfer):
 | Instrument Sans (subsetted, `wght` axis) | 27.6 KB |
 | `favicon.svg` | 4.2 KB |
 | Hero photograph (the 800 px candidate a 1440 px screen picks) | 75.4 KB |
-| **First load total** | **≈ 167 KB in 7 requests** |
+| **First load total** | **≈ 168 KB in 7 requests** |
 
 What gets it there:
 
@@ -316,8 +316,9 @@ SITE=https://<user>.github.io BASE_PATH=/crystal-kizor npm run build
 ### GitHub Pages (included)
 
 `.github/workflows/deploy.yml` type-checks, builds and publishes to Pages on every push, resolving
-the real Pages URL for `SITE`/`BASE_PATH` automatically. It is what produces the live link for this
-submission; the same workflow works unchanged behind a custom domain.
+the real Pages URL for `SITE`/`BASE_PATH` automatically; the same workflow works unchanged behind a
+custom domain. The live page for this submission is deployed on Netlify —
+**https://crystal-kizor.netlify.app/** — from the same `dist/` build.
 
 One-time setup: in the repository, go to **Settings → Pages → Build and deployment → Source** and choose
 **GitHub Actions**. The workflow deliberately does not try to create the Pages site itself (it needs admin
