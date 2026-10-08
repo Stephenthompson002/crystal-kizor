@@ -369,9 +369,11 @@ creating the Pages site needs repository administration the workflow token does 
 request returned `Resource not accessible by integration` on every run. The step now only *reads*
 the Pages configuration.
 
-**One manual step is required the first time:** *Settings → Pages → Source: **GitHub Actions***. It
-cannot be done from CI. After that single change the `deploy` job publishes and the workflow is
-self-sufficient.
+**Pages is switched on for this repository**, so the `deploy` job publishes on every push to `main`
+and the mirror lives at **https://stephenthompson002.github.io/crystal-kizor/**. The one-time step —
+*Settings → Pages → Source: **GitHub Actions*** — has to be done in the UI, not from CI: creating the
+Pages site requires repository administration the workflow token does not have. Until it is done the
+`verify` job still runs and still gates; only `deploy` is skipped.
 
 ### Vercel
 

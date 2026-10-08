@@ -1,14 +1,14 @@
 # Stage 1 Assessment — Crystal Kizor
 
 **Live:** https://crystal-kizor.netlify.app/
+**Mirror:** https://stephenthompson002.github.io/crystal-kizor/ (published by CI on every push)
 **Source:** https://github.com/Stephenthompson002/crystal-kizor
 
 The build is fully static — `npm run build` produces `dist/` with no runtime, no API keys and no
-server — so any host serves it unchanged. This delivery is deployed on **Netlify** from that build.
-The repository additionally carries a GitHub Actions workflow that type-checks, builds, audits and
-publishes to GitHub Pages on every push; if that mirror is used, Pages needs switching on once for
-the repository — *Settings → Pages → Source: **GitHub Actions*** — because a workflow token is not
-permitted to create the Pages site.
+server — so any host serves it unchanged, which is why the same commit is live on two of them. The
+delivery is deployed on **Netlify**; the repository's GitHub Actions workflow type-checks, builds,
+audits and publishes the same `dist/` to **GitHub Pages** on every push to `main`, so a regression
+cannot reach either host.
 
 ---
 
